@@ -1,15 +1,15 @@
 from fnn import fnn_model
 import numpy as np
 import pickle
-import sys
 import os
-
 from utils import create_dir
+import sys
+sys.path.insert(0, '../')
 
 
-class CoerenceChecker:
+class CoherenceChecker:
     """
-    Class that performs the Coerence test.
+    Class that performs the coherence test.
     """
     def __init__(
         self,
@@ -34,16 +34,16 @@ class CoerenceChecker:
             Use None if you don't want to perform train2.
         test_inputs: numpy array, default=None
             numpy array with shape (test_size, n_features) representing test set's known terms.
-            Use None if you want to perform coerence evaluation on training set.
+            Use None if you want to perform coherence evaluation on training set.
         test_outputs: list, default=None
             list of the five numpy arrays representing personality scores for test set's known terms.
-            Use None if you want to perform coerence evaluation on training set.
+            Use None if you want to perform coherence evaluation on training set.
         batch_size: int, default=32
             training batch_size of models.
         ocean_traits: list, default=[0, 1, 2, 3, 4]
-            Personality traits to which perform test. O: 0, C: 1, E: 2, A: 3, N: 4
+            Personality traits to which perform test. O: 0, C: 1, E: 2, A: 3, N: 4.
         test1: bool
-            True if you want to estimate performances of M1's training using test_inputs and test_outputs (only valid if test_inputs and test_outputs are not None)
+            True if you want to estimate performances of M1's training using test_inputs and test_outputs (only valid if test_inputs and test_outputs are not None).
 
         Attributes
         ----------
@@ -56,10 +56,10 @@ class CoerenceChecker:
             It is None in the case of no train2.
         self.test_inputs: numpy array
             numpy array with shape (test_size, n_features) representing test set's known terms.
-            It is equal to self.train_inputs in case of performing coerence evaluation on training set.
+            It is equal to self.train_inputs in case of performing coherence evaluation on training set.
         self.test_outputs: list
             list of the five numpy arrays representing personality scores for test set's known terms.
-            It is equal to self.train_outputs in case of performing coerence evaluation on training set.
+            It is equal to self.train_outputs in case of performing coherence evaluation on training set.
         self.batch_size: int
             training batch_size of models.
         ocean_traits: list
@@ -95,7 +95,7 @@ class CoerenceChecker:
     def train1_inference(self, epochs=100, root=None, reset_models=True):
         """
         Perform:
-         - train1 of coerence test on self.inputs. After each epoch predict scores of test_inputs and evaluate performance.
+         - train1 of coherence test on self.inputs. After each epoch predict scores of test_inputs and evaluate performance.
          - at the end of train1, if self.inputs_neig is not None, inference of self.inputs_neig's scores.
 
         Parameters
@@ -198,10 +198,10 @@ class CoerenceChecker:
             with open(os.path.join(root, "outputs_neig.pickle".strip()), "wb") as f:
                 pickle.dump(self.outputs_neig, f)
 
-    def train2_coerence(self, epochs=100, root=None):
+    def train2_coherence(self, epochs=100, root=None):
         """
         Perform:
-         - train2 of coerence test on self.inputs_neig.
+         - train2 of coherence test on self.inputs_neig.
          - at the end of each train2's epoch, inference of self.test_inputs' scores and performances evaluation.
          
         Parameters

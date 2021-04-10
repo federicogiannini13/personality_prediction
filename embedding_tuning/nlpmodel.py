@@ -7,7 +7,6 @@ from tensorflow.keras.layers import (
     MaxPooling2D,
     Lambda,
     Input,
-    Multiply,
 )
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow import math as M
@@ -16,7 +15,8 @@ import sklearn
 import sklearn.metrics
 import pickle
 import os
-
+import sys
+sys.path.insert(0, '../')
 from utils import create_dir
 
 

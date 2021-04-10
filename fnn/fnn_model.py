@@ -19,7 +19,7 @@ class FNNModel:
     """
     def __init__(self, input_dim=100, dropout=0.3):
         """
-        Init method that build the model.
+        Init method that builds the model.
 
         Parameters
         ----------
@@ -32,56 +32,68 @@ class FNNModel:
         ----------
         self.model: Keras Model
             the model to be trained.
+        self.input_layer: tensorflow.keras.layers.Input
+            the model's input layer.
+        self.h1_layer: tensorflow.keras.layers.Dense
+            the first model's hidden layer.
+        self.h2_layer: tensorflow.keras.layers.Dense
+            the second model's hidden layer.
+        self.h3_layer: tensorflow.keras.layers.Dense
+            the third model's hidden layer.
+        self.dropout_layer: tensorflow.keras.layers.Dropout
+            the model's dropout layer.
+        self.output_layer: tensorflow.keras.layers.Dense
+            the model's output layer.
         """
         self.input_dim = input_dim
         self.dropout = dropout
         self.dtype = np.float32
         self.hidden_activation = LeakyReLU(alpha=0.2)
-        self.h1_discr_output_dim = 140
-        self.h2_discr_output_dim = 70
-        self.h3_discr_output_dim = 40
+        self.h1_layer_output_dim = 140
+        self.h2_layer_output_dim = 70
+        self.h3_layer_output_dim = 40
         self._create_layers()
         self._create_model()
         self._compile_model()
 
     def _create_layers(self):
-        self.input_discr = Input(
-            shape=(self.input_dim,), name="input_discr", dtype=self.dtype
+        self.input_layer = Input(
+            shape=(self.input_dim,), name="input", dtype=self.dtype
         )
-        self.h1_discr = Dense(
-            units=self.h1_discr_output_dim,
+        self.h1_layer = Dense(
+            units=self.h1_layer_output_dim,
             input_dim=self.input_dim,
             activation=self.hidden_activation,
-            name="h1_discr",
+            name="h1",
         )
         self.drop1 = Dropout(self.dropout)
-        self.h2_discr = Dense(
-            units=self.h2_discr_output_dim,
-            input_dim=self.h1_discr_output_dim,
+        self.h2_layer = Dense(
+            units=self.h2_layer_output_dim,
+            input_dim=self.h1_layer_output_dim,
             activation=self.hidden_activation,
-            name="h2_discr",
+            name="h2",
         )
         self.drop2 = Dropout(self.dropout)
-        self.h3_discr = Dense(
-            units=self.h3_discr_output_dim,
-            input_dim=self.h2_discr_output_dim,
+        self.h3_layer = Dense(
+            units=self.h3_layer_output_dim,
+            input_dim=self.h2_layer_output_dim,
             activation=self.hidden_activation,
-            name="h3_discr",
+            name="h3",
         )
-        self.drop3 = Dropout(self.dropout)
-        self.output = Dense(
-            units=1, activation=self.hidden_activation, name="out_discr"
+        self.dropout_layer = Dropout(self.dropout)
+        self.output_layer = Dense(
+            units=1, activation=self.hidden_activation, name="out"
         )
 
     def _create_model(self):
         self.model = Sequential()
-        self.model.add(self.h1_discr)
+        self.model.add(self.h1_layer)
         self.model.add(self.drop1)
-        self.model.add(self.h2_discr)
+        self.model.add(self.h2_layer)
         self.model.add(self.drop2)
-        self.model.add(self.h3_discr)
-        self.model.add(self.drop3)
-        self.model.add(self.output)
+        self.model.add(self.h3_layer)
+        self.model.add(self.dropout_layer)
+        self.model.add(self.output_layer)
 
     def _compile_model(self):
         self.model.compile(optimizer="adam", loss="mse")

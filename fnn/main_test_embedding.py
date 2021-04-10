@@ -4,6 +4,8 @@ from fnn import data_loader
 import pandas as pd
 from fnn.main_test_embedding_config import *
 from utils import create_dir
+import sys
+sys.path.insert(0, '../')
 
 df_performance = pd.DataFrame(columns=["trait", "r2"])
 base_root = os.path.join(ROOT_DIR, "outputs", embedding_name, "KNN")

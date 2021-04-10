@@ -4,6 +4,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import BallTree
 from sklearn.model_selection import KFold
 import random
+import sys
+sys.path.insert(0, '../')
 
 
 class Preprocessing:
