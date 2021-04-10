@@ -1,0 +1,10 @@
+data/yelp_dataset/*
+data/yelp_dataset
+venv/*
+venv
+*/.ipynb_checkpoints
+.ipynb_checkpoints
+__pycache__/
+*/__pycache__
+*/.idea
+*.xml
