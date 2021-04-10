@@ -5,10 +5,13 @@ from fnn import data_loader, fnn_model
 import pandas as pd
 import numpy as np
 import sys
-sys.path.insert(0, '../')
+
+sys.path.insert(0, "../")
 
 df_performance = pd.DataFrame(columns=["trait", "fold", "best_epoch", "mse", "r2"])
-base_root = os.path.join(ROOT_DIR, "outputs", embedding_name, "KFCV", str(folds_number) + "_folds")
+base_root = os.path.join(
+    ROOT_DIR, "outputs", embedding_name, "KFCV", str(folds_number) + "_folds"
+)
 
 dl = data_loader.Data_Loader(
     traits=ocean_traits, embedding_name=embedding_name, k_folds=folds_number

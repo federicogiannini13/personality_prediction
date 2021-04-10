@@ -8,7 +8,8 @@ from settings import ROOT_DIR
 import json
 import numpy as np
 import sys
-sys.path.insert(0, '../')
+
+sys.path.insert(0, "../")
 
 
 class ReviewsLoader:

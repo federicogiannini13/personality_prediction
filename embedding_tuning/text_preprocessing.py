@@ -2,7 +2,8 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import sys
-sys.path.insert(0, '../')
+
+sys.path.insert(0, "../")
 
 
 class TextPreProcessing:

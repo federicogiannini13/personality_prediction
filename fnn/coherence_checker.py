@@ -4,13 +4,15 @@ import pickle
 import os
 from utils import create_dir
 import sys
-sys.path.insert(0, '../')
+
+sys.path.insert(0, "../")
 
 
 class CoherenceChecker:
     """
     Class that performs the coherence test.
     """
+
     def __init__(
         self,
         inputs,
@@ -19,8 +21,8 @@ class CoherenceChecker:
         test_inputs=None,
         test_outputs=None,
         batch_size=32,
-        ocean_traits = [0,1,2,3,4],
-        test1 = None
+        ocean_traits=[0, 1, 2, 3, 4],
+        test1=None,
     ):
         """
         Parameters
@@ -106,7 +108,7 @@ class CoherenceChecker:
             path to which save performance and weights of train1. Use None to not save anything.
         reset_models: True
             use True to-reinitialize models' weights.
-            
+
         Attributes
         -------
         self.models: list of FFNModel
@@ -203,7 +205,7 @@ class CoherenceChecker:
         Perform:
          - train2 of coherence test on self.inputs_neig.
          - at the end of each train2's epoch, inference of self.test_inputs' scores and performances evaluation.
-         
+
         Parameters
         ----------
         epochs: int
@@ -254,7 +256,7 @@ class CoherenceChecker:
             self.best_mse_train2.append(m.mse[best_epoch])
             self.best_r2_train2.append(m.r2[best_epoch])
             self.final_weights_train2.append(m.model.get_weights())
-            
+
             if root is not None:
                 with open(os.path.join(root, "all_mse.pickle"), "wb") as f:
                     pickle.dump(self.all_mse_train2, f)

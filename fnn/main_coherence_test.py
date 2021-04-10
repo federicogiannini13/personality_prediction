@@ -4,7 +4,8 @@ from settings import ROOT_DIR
 from fnn import data_loader, coherence_checker
 import pandas as pd
 import sys
-sys.path.insert(0, '../')
+
+sys.path.insert(0, "../")
 
 epochs.sort()
 df_performance_coherence = pd.DataFrame(
@@ -21,7 +22,9 @@ if test1:
     df_performance_kfolds = pd.DataFrame(
         columns=["trait", "fold", "best_epoch", "mse", "r2"]
     )
-base_root = os.path.join(ROOT_DIR, "outputs", embedding_name, "coherence_test", str(folds_number)+"_folds")
+base_root = os.path.join(
+    ROOT_DIR, "outputs", embedding_name, "coherence_test", str(folds_number) + "_folds"
+)
 
 for distance in distances:
     root = os.path.join(base_root, str(distance) + "_dist")
@@ -48,7 +51,7 @@ for distance in distances:
                 test_outputs=[dl.data[cont_tr].test_outputs[trait]],
                 batch_size=batch_size,
                 ocean_traits=[trait],
-                test1 = test1
+                test1=test1,
             )
 
             checker.train1_inference(epochs=epochs[0], root=root_)
@@ -88,7 +91,9 @@ for distance in distances:
                 root_ = os.path.join(
                     root, str(trait) + "_trait", str(fold) + "_fold", str(e) + "_ep"
                 )
-                checker.train1_inference(reset_models=False, epochs=interval, root=root_)
+                checker.train1_inference(
+                    reset_models=False, epochs=interval, root=root_
+                )
                 checker.train2_coherence(epochs=epochs[1], root=root_)
                 df_performance_coherence = df_performance_coherence.append(
                     {
@@ -106,11 +111,13 @@ for distance in distances:
                 )
                 e += interval
 
-    df_performance_coherence.groupby(["trait", "fold"]).max("best_r2").reset_index().groupby("trait").mean().reset_index().drop(columns="fold").to_excel(
+    df_performance_coherence.groupby(["trait", "fold"]).max(
+        "best_r2"
+    ).reset_index().groupby("trait").mean().reset_index().drop(columns="fold").to_excel(
         os.path.join(root, "final_performances_coherence.xlsx"), index=False
     )
 
     if test1:
-        df_performance_kfolds.groupby("trait").mean().reset_index().drop(columns="fold").to_excel(
-            os.path.join(root, "final_performances_kfolds.xlsx"), index=False
-        )
+        df_performance_kfolds.groupby("trait").mean().reset_index().drop(
+            columns="fold"
+        ).to_excel(os.path.join(root, "final_performances_kfolds.xlsx"), index=False)

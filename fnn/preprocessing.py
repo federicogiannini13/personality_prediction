@@ -5,7 +5,8 @@ from sklearn.neighbors import BallTree
 from sklearn.model_selection import KFold
 import random
 import sys
-sys.path.insert(0, '../')
+
+sys.path.insert(0, "../")
 
 
 class Preprocessing:
@@ -90,10 +91,10 @@ class Preprocessing:
                 self.train_index_kfolds.append(train_index)
                 self.test_index_kfolds.append(test_index)
         if train_prop_holdout is not None:
-            if train_prop_holdout<1:
+            if train_prop_holdout < 1:
                 self.sep = int(train_prop_holdout * len(self.words_known))
             else:
-                self.sep=None
+                self.sep = None
             self.initialize_data_holdout(standardize=standardize_holdout)
 
         print("____ PREPROCESSING DONE")
@@ -225,8 +226,6 @@ class Preprocessing:
 
             embedding_known = np.asarray(self.embedding_known)
             embedding_known = np.asarray(embedding_known, dtype=self.dtype)
-
-
 
         if not self.sep is None:
             self.train_inputs = embedding_known[0 : self.sep]
@@ -567,14 +566,19 @@ class Preprocessing:
         return self.r2_embedding_test
 
     def search_neigs_known(self, ocean, k=3, threshold=0.3):
-        self.tree_known = BallTree(self.train_inputs[0:self.train_len])
-        self.neigs_known = self.tree_known.query(X=self.train_inputs[0:self.train_len], k=k + 1, return_distance=False)
+        self.tree_known = BallTree(self.train_inputs[0 : self.train_len])
+        self.neigs_known = self.tree_known.query(
+            X=self.train_inputs[0 : self.train_len], k=k + 1, return_distance=False
+        )
         self.avg_neigs_known = []
         self.outputs_neigs_known = []
         for i in range(0, len(self.neigs_known)):
-            out = [self.train_outputs[ocean][self.neigs_known[i][j]] for j in range(1, len(self.neigs_known[i]))]
+            out = [
+                self.train_outputs[ocean][self.neigs_known[i][j]]
+                for j in range(1, len(self.neigs_known[i]))
+            ]
             self.avg_neigs_known.append(np.mean(out))
             self.outputs_neigs_known.append(out)
-        self.r2.append(sklearn.metrics.r2_score(self.train_outputs[ocean], self.avg_neigs_known))
-
-
+        self.r2.append(
+            sklearn.metrics.r2_score(self.train_outputs[ocean], self.avg_neigs_known)
+        )

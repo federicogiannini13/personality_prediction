@@ -4,7 +4,8 @@ from embedding_tuning import nlpmodel, reviews_loader
 from embedding_tuning.main_nlp_config import *
 import os
 import sys
-sys.path.insert(0, '../')
+
+sys.path.insert(0, "../")
 
 v = vocab.VocabCreator()
 

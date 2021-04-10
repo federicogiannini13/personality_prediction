@@ -4,22 +4,25 @@ import pickle
 from settings import ROOT_DIR
 import os
 import sys
-sys.path.insert(0, '../')
+
+sys.path.insert(0, "../")
+
 
 class Data_Loader:
     """
     Class that stores preprocessing objects for different personality traits.
     """
+
     def __init__(
         self,
-        traits:list=[0, 1, 2, 3, 4],
-        distance:float=None,
-        embedding_name:str="new_tuned_embedding",
-        k_folds:int=None,
-        train_prop_holdout:float=None,
-        standardize_holdout:bool=True,
-        shuffle:bool = True,
-        random_state:int= 42
+        traits: list = [0, 1, 2, 3, 4],
+        distance: float = None,
+        embedding_name: str = "new_tuned_embedding",
+        k_folds: int = None,
+        train_prop_holdout: float = None,
+        standardize_holdout: bool = True,
+        shuffle: bool = True,
+        random_state: int = 42,
     ):
         """
         The init method that stores preprocessing objects for different personality traits.

@@ -5,7 +5,8 @@ import pandas as pd
 from fnn.main_test_embedding_config import *
 from utils import create_dir
 import sys
-sys.path.insert(0, '../')
+
+sys.path.insert(0, "../")
 
 df_performance = pd.DataFrame(columns=["trait", "r2"])
 base_root = os.path.join(ROOT_DIR, "outputs", embedding_name, "KNN")
@@ -16,7 +17,7 @@ dl = data_loader.Data_Loader(
     train_prop_holdout=1,
     embedding_name=embedding_name,
     standardize_holdout=False,
-    shuffle=False
+    shuffle=False,
 )
 
 for cont_tr, trait in enumerate(ocean_traits):
@@ -27,5 +28,5 @@ for cont_tr, trait in enumerate(ocean_traits):
         {"trait": trait, "r2": r2}, ignore_index=True
     )
     df_performance.to_excel(
-        os.path.join(base_root, str(k)+"nn_performances.xlsx"), index=False
+        os.path.join(base_root, str(k) + "nn_performances.xlsx"), index=False
     )

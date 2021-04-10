@@ -17,6 +17,7 @@ class FNNModel:
     """
     Class that implements the fnn model.
     """
+
     def __init__(self, input_dim=100, dropout=0.3):
         """
         Init method that builds the model.
