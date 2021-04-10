@@ -129,9 +129,7 @@ class CoerenceChecker:
         self.outputs_neig = []
         self.final_weights_train1 = []
         if root is not None:
-            root_temp = os.path.join(root, "temp")
             create_dir(root)
-            create_dir(root_temp)
         if self.test1:
             self.best_weights_train1 = []
             self.best_mse_train1 = []
@@ -194,11 +192,6 @@ class CoerenceChecker:
                 with open(os.path.join(root, "final_weights_train1.pickle"), "wb") as f:
                     pickle.dump(self.final_weights_train1, f)
 
-                f = open(
-                    os.path.join(root_temp, "0_train_" + str(ocean) + "trait.txt"), "w"
-                )
-                f.close()
-
         if self.inputs_neig is not None:
             self.outputs_neig = np.asarray(self.outputs_neig, dtype=np.float32)
         if root is not None:
@@ -241,9 +234,7 @@ class CoerenceChecker:
         self.best_r2_train2 = []
         self.final_weights_train2 = []
         self.best_weights_train2 = []
-        root_temp = os.path.join(root, "temp")
         create_dir(root)
-        create_dir(root_temp)
 
         for cont_oc, ocean in enumerate(self.ocean_traits):
             m = fnn_model.FNNModel()
@@ -279,7 +270,6 @@ class CoerenceChecker:
                     pickle.dump(self.final_weights_train2, f)
                 with open(os.path.join(root, "best_weights_train2.pickle"), "wb") as f:
                     pickle.dump(self.best_weights_train2, f)
-                f = open(os.path.join(root_temp, "1_coerence_" + str(ocean) + ".txt"), "wt")
             f.close()
 
     def set_outputs_neig(self, weights):
