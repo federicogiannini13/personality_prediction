@@ -1,5 +1,7 @@
 data/yelp_dataset/*
 data/yelp_dataset
+outputs
+outputs/*
 venv/*
 venv
 */.ipynb_checkpoints
