@@ -1,6 +1,5 @@
 import os
 from fnn.main_kfcv_test_config import *
-from settings import ROOT_DIR
 from fnn import data_loader, fnn_model
 import pandas as pd
 import numpy as np
@@ -10,7 +9,7 @@ sys.path.insert(0, "../")
 
 df_performance = pd.DataFrame(columns=["trait", "fold", "best_epoch", "mse", "r2"])
 base_root = os.path.join(
-    ROOT_DIR, "outputs", embedding_name, "KFCV", str(folds_number) + "_folds"
+    OUTPUTS_DIR, "outputs", embedding_name, "KFCV", str(folds_number) + "_folds"
 )
 
 dl = data_loader.Data_Loader(

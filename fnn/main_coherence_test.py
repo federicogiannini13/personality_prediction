@@ -1,6 +1,5 @@
 import os
 from fnn.main_coerence_test_config import *
-from settings import ROOT_DIR
 from fnn import data_loader, coherence_checker
 import pandas as pd
 import sys
@@ -23,7 +22,11 @@ if test1:
         columns=["trait", "fold", "best_epoch", "mse", "r2"]
     )
 base_root = os.path.join(
-    ROOT_DIR, "outputs", embedding_name, "coherence_test", str(folds_number) + "_folds"
+    OUTPUTS_DIR,
+    "outputs",
+    embedding_name,
+    "coherence_test",
+    str(folds_number) + "_folds",
 )
 
 for distance in distances:
