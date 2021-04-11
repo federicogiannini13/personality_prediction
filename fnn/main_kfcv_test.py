@@ -1,5 +1,5 @@
 import os
-from fnn.main_kfcv_test_config import *
+from fnn.config.main_kfcv_test_config import *
 from fnn import data_loader, fnn_model
 import pandas as pd
 import numpy as np
