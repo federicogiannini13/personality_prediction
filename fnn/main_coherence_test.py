@@ -1,12 +1,12 @@
 import os
-from fnn.config.main_coherence_test_config import *
+from fnn.config.main_coherence_test_config import config
 from fnn import data_loader, coherence_checker
 import pandas as pd
 import sys
 
 sys.path.insert(0, "../")
 
-epochs.sort()
+config.epochs.sort()
 df_performance_coherence = pd.DataFrame(
     columns=[
         "trait",
@@ -17,34 +17,37 @@ df_performance_coherence = pd.DataFrame(
         "best_mse",
     ]
 )
-if test1:
+if config.test1:
     df_performance_kfolds = pd.DataFrame(
         columns=["trait", "fold", "best_epoch", "mse", "r2"]
     )
 base_root = os.path.join(
-    OUTPUTS_DIR,
+    config.OUTPUTS_DIR,
     "outputs",
-    embedding_name,
+    config.embedding_name,
     "coherence_test",
-    str(folds_number) + "_folds",
+    str(config.folds_number) + "_folds",
 )
 
-for distance in distances:
+for distance in config.distances:
     root = os.path.join(base_root, str(distance) + "_dist")
     dl = data_loader.Data_Loader(
-        traits=ocean_traits,
+        traits=config.ocean_traits,
         distance=distance,
-        embedding_name=embedding_name,
-        k_folds=folds_number,
+        embedding_name=config.embedding_name,
+        k_folds=config.folds_number,
     )
     fold = 0
 
-    for fold in range(0, folds_number):
-        for cont_tr, trait in enumerate(ocean_traits):
+    for fold in range(0, config.folds_number):
+        for cont_tr, trait in enumerate(config.ocean_traits):
             dl.data[cont_tr].initialize_data_kfolds_cv(fold)
             dl.data[cont_tr].search_unknown_neighbors(distance=distance)
             root_ = os.path.join(
-                root, str(trait) + "_trait", str(fold) + "_fold", str(epochs[0]) + "_ep"
+                root,
+                str(trait) + "_trait",
+                str(fold) + "_fold",
+                str(config.epochs[0]) + "_ep",
             )
             checker = coherence_checker.CoherenceChecker(
                 inputs=dl.data[cont_tr].train_inputs,
@@ -52,13 +55,13 @@ for distance in distances:
                 inputs_neig=dl.data[cont_tr].inputs_neig,
                 test_inputs=dl.data[cont_tr].test_inputs,
                 test_outputs=[dl.data[cont_tr].test_outputs[trait]],
-                batch_size=batch_size,
+                batch_size=config.batch_size,
                 ocean_traits=[trait],
-                test1=test1,
+                test1=config.test1,
             )
 
-            checker.train1_inference(epochs=epochs[0], root=root_)
-            if test1:
+            checker.train1_inference(epochs=config.epochs[0], root=root_)
+            if config.test1:
                 df_performance_kfolds = df_performance_kfolds.append(
                     {
                         "trait": trait,
@@ -72,12 +75,12 @@ for distance in distances:
                 df_performance_kfolds.to_excel(
                     os.path.join(base_root, "performances_kfolds.xlsx"), index=False
                 )
-            checker.train2_coherence(epochs=epochs[1], root=root_)
+            checker.train2_coherence(epochs=config.epochs[1], root=root_)
             df_performance_coherence = df_performance_coherence.append(
                 {
                     "trait": trait,
                     "fold": fold,
-                    "epochs_train1": epochs[0],
+                    "epochs_train1": config.epochs[0],
                     "best_epoch_train2": checker.best_epochs_train2[0],
                     "best_r2": checker.best_r2_train2[0],
                     "best_mse": checker.best_mse_train2[0],
@@ -88,16 +91,16 @@ for distance in distances:
                 os.path.join(root, "performances_coherence.xlsx"), index=False
             )
 
-            e = epochs[0]
-            e += interval
-            while e <= epochs[1]:
+            e = config.epochs[0]
+            e += config.interval
+            while e <= config.epochs[1]:
                 root_ = os.path.join(
                     root, str(trait) + "_trait", str(fold) + "_fold", str(e) + "_ep"
                 )
                 checker.train1_inference(
-                    reset_models=False, epochs=interval, root=root_
+                    reset_models=False, epochs=config.interval, root=root_
                 )
-                checker.train2_coherence(epochs=epochs[1], root=root_)
+                checker.train2_coherence(epochs=config.epochs[1], root=root_)
                 df_performance_coherence = df_performance_coherence.append(
                     {
                         "trait": trait,
@@ -112,7 +115,7 @@ for distance in distances:
                 df_performance_coherence.to_excel(
                     os.path.join(root, "performances_coherence.xlsx"), index=False
                 )
-                e += interval
+                e += config.interval
 
     df_performance_coherence.groupby(["trait", "fold"]).max(
         "best_r2"
@@ -120,7 +123,7 @@ for distance in distances:
         os.path.join(root, "final_performances_coherence.xlsx"), index=False
     )
 
-    if test1:
+    if config.test1:
         df_performance_kfolds.groupby("trait").mean().reset_index().drop(
             columns="fold"
         ).to_excel(os.path.join(root, "final_performances_kfolds.xlsx"), index=False)
