@@ -49,7 +49,7 @@ class Data_Loader:
         Parameters
         ----------
         self.data: list
-            list of preprocessing obkects. In the i-th position is stored the preprocessing object associated with the i-th trait of traits' list.
+            list of preprocessing objects. In the i-th position is stored the preprocessing object associated with the i-th trait of traits' list.
         """
         v = vocab.VocabCreator(load_embedding=embedding_name == "glove")
 

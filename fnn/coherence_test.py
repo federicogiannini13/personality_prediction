@@ -37,7 +37,6 @@ for distance in config.distances:
         embedding_name=config.embedding_name,
         k_folds=config.folds_number,
     )
-    fold = 0
 
     for fold in range(0, config.folds_number):
         for cont_tr, trait in enumerate(config.ocean_traits):
