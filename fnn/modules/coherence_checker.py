@@ -1,11 +1,11 @@
-from fnn import fnn_model
+from fnn.modules import fnn_model
 import numpy as np
 import pickle
 import os
 from utils import create_dir
 import sys
 
-sys.path.insert(0, "../")
+sys.path.insert(0, "../../")
 
 
 class CoherenceChecker:

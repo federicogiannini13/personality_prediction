@@ -1,7 +1,7 @@
-from embedding_tuning.reviews_loader import read_reviews_loaded
+from embedding_tuning.modules.reviews_loader import read_reviews_loaded
 import vocab
-from embedding_tuning import nlpmodel, reviews_loader
-from embedding_tuning.config.main_nlp_config import *
+from embedding_tuning.modules import nlpmodel, reviews_loader
+from embedding_tuning.config.tune_embedding_config import *
 import os
 import sys
 

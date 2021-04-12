@@ -30,6 +30,6 @@ config.tune_embedding = True
 config = load_yaml_config(
     config,
     os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "main_coherence_test_config.yaml"
+        os.path.dirname(os.path.abspath(__file__)), "tune_embedding_config.yaml"
     ),
 )

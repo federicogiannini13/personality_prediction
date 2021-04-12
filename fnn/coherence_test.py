@@ -1,6 +1,6 @@
 import os
-from fnn.config.main_coherence_test_config import config
-from fnn import data_loader, coherence_checker
+from fnn.config.coherence_test_config import config
+from fnn.modules import data_loader, coherence_checker
 import pandas as pd
 import sys
 
