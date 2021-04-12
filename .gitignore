@@ -12,5 +12,4 @@ __pycache__/
 *.xml
 .idea/*
 .idea
-**/config
-prova
+**/.yaml

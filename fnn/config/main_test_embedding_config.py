@@ -1,17 +1,21 @@
 # ______
 # IMPORT:
-from settings import ROOT_DIR
+import os
 import sys
+from utils import load_yaml_config, Config
 
 sys.path.insert(0, "../../")
 
 # ______
 # CONFIG:
-k = 5
+config = Config()
+config.k = 5
 # number of nearest neighbor of KNN algorithm.
-embedding_name = "glove"
+config.embedding_name = "glove"
 # the embedding to be used. There must be a directory containing the embedding in data folder.
-ocean_traits = [0, 1, 2, 3, 4]
+config.ocean_traits = [0, 1, 2, 3, 4]
 # OCEAN personality traits to which perform the coherence test: O:0, C:1, E:2, A:3, N:4
-OUTPUTS_DIR = ROOT_DIR
-# The base path in which tests' outputs will be saved. Set as ROOT_DIR if you want to store them in project's dir.
+config.OUTPUTS_DIR = None
+# The base path in which tests' outputs will be saved. Set as None if you want to store them in project's dir.
+
+config = load_yaml_config(config, os.path.join(os.path.dirname(os.path.abspath(__file__)), "main_test_embdding_config.yaml"))
