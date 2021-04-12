@@ -27,5 +27,9 @@ for cont_tr, trait in enumerate(config.ocean_traits):
         {"trait": trait, "r2": r2}, ignore_index=True
     )
     df_performance.to_excel(
-        os.path.join(base_root, str(config.k) + "nn_performances.xlsx"), index=False
+        os.path.join(
+            base_root,
+            "performances_" + str(config.k) + "nn_" + config.embedding_name + ".xlsx",
+        ),
+        index=False,
     )

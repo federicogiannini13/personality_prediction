@@ -119,10 +119,32 @@ for distance in config.distances:
     df_performance_coherence.groupby(["trait", "fold"]).max(
         "best_r2"
     ).reset_index().groupby("trait").mean().reset_index().drop(columns="fold").to_excel(
-        os.path.join(root, "final_performances_coherence.xlsx"), index=False
+        os.path.join(
+            root,
+            "final_performances_coherence_"
+            + str(config.folds_number)
+            + "folds_"
+            + str(distance)
+            + "dist_"
+            + config.embedding_name
+            + ".xlsx",
+        ),
+        index=False,
     )
 
     if config.test1:
         df_performance_kfolds.groupby("trait").mean().reset_index().drop(
             columns="fold"
-        ).to_excel(os.path.join(root, "final_performances_kfolds.xlsx"), index=False)
+        ).to_excel(
+            os.path.join(
+                root,
+                "final_performances_coherence_"
+                + str(config.folds_number)
+                + "folds_"
+                + str(distance)
+                + "dist_"
+                + config.embedding_name
+                + ".xlsx",
+            ),
+            index=False,
+        )

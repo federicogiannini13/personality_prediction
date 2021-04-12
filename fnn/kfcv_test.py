@@ -61,5 +61,13 @@ for fold in range(0, config.folds_number):
         )
 
 df_performance.groupby("trait").mean().reset_index().drop(columns="fold").to_excel(
-    os.path.join(base_root, "final_performances.xlsx"), index=False
+    os.path.join(
+        base_root,
+        "final_performances_"
+        + str(config.folds_number)
+        + "fcv_"
+        + config.embedding_name
+        + ".xlsx",
+    ),
+    index=False,
 )

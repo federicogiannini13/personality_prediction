@@ -24,7 +24,5 @@ config.OUTPUTS_DIR = None
 
 config = load_yaml_config(
     config,
-    os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "kfcv_test_config.yaml"
-    ),
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "kfcv_test_config.yaml"),
 )
