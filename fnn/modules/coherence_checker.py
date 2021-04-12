@@ -94,7 +94,9 @@ class CoherenceChecker:
         self.mse = []
         self.r2 = []
 
-    def train1_inference(self, epochs=100, root=None, reset_models=True):
+    def train1_inference(
+        self, epochs=100, root=None, reset_models=True, epochs_interval_evaluation=1
+    ):
         """
         Perform:
          - train1 of coherence test on self.inputs. After each epoch predict scores of test_inputs and evaluate performance.
@@ -108,6 +110,8 @@ class CoherenceChecker:
             path to which save performance and weights of train1. Use None to not save anything.
         reset_models: True
             use True to-reinitialize models' weights.
+        epochs_interval_evaluation: int
+            if self.test1=True, M1's training will stop after each epochs_interval_evaluation epochs to evaluate performances.
 
         Attributes
         -------
@@ -153,6 +157,7 @@ class CoherenceChecker:
                     train_outputs=self.outputs[cont_oc],
                     epochs=epochs,
                     batch_size=self.batch_size,
+                    epochs_interval_evaluation=epochs,
                 )
             else:
                 self.models[cont_oc].fit_predict(
@@ -162,6 +167,7 @@ class CoherenceChecker:
                     test_outputs=self.test_outputs[cont_oc],
                     epochs=epochs,
                     batch_size=self.batch_size,
+                    epochs_interval_evaluation=epochs_interval_evaluation,
                 )
                 self.best_weights_train1.append(self.models[cont_oc].best_weights)
                 self.all_mse_train1.append(self.models[cont_oc].mse)
@@ -200,7 +206,7 @@ class CoherenceChecker:
             with open(os.path.join(root, "outputs_neig.pickle".strip()), "wb") as f:
                 pickle.dump(self.outputs_neig, f)
 
-    def train2_coherence(self, epochs=100, root=None):
+    def train2_coherence(self, epochs=100, root=None, epochs_interval_evaluation=1):
         """
         Perform:
          - train2 of coherence test on self.inputs_neig.
@@ -212,6 +218,8 @@ class CoherenceChecker:
             train2 epochs number.
         root: str or path.
             path to which save performance and weights of train2. Use None to not save anything.
+        epochs_interval_evaluation: int
+            M2's training will stop after each epochs_interval_evaluation epochs to evaluate performances.
 
         Attributes
         -------
@@ -247,6 +255,7 @@ class CoherenceChecker:
                 test_outputs=self.test_outputs[cont_oc],
                 epochs=epochs,
                 batch_size=self.batch_size,
+                epochs_interval_evaluation=epochs_interval_evaluation,
             )
             self.all_mse_train2.append(m.mse)
             self.all_r2_train2.append(m.r2)

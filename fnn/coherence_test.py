@@ -59,7 +59,11 @@ for distance in config.distances:
                 test1=config.test1,
             )
 
-            checker.train1_inference(epochs=config.epochs[0], root=root_)
+            checker.train1_inference(
+                epochs=config.epochs[0],
+                root=root_,
+                epochs_interval_evaluation=config.epochs_interval_evaluation,
+            )
             if config.test1:
                 df_performance_kfolds = df_performance_kfolds.append(
                     {
@@ -74,7 +78,11 @@ for distance in config.distances:
                 df_performance_kfolds.to_excel(
                     os.path.join(base_root, "performances_kfolds.xlsx"), index=False
                 )
-            checker.train2_coherence(epochs=config.epochs[1], root=root_)
+            checker.train2_coherence(
+                epochs=config.epochs[1],
+                root=root_,
+                epochs_interval_evaluation=config.epochs_interval_evaluation,
+            )
             df_performance_coherence = df_performance_coherence.append(
                 {
                     "trait": trait,
@@ -91,15 +99,22 @@ for distance in config.distances:
             )
 
             e = config.epochs[0]
-            e += config.interval
+            e += config.epochs_interval
             while e <= config.epochs[1]:
                 root_ = os.path.join(
                     root, str(trait) + "_trait", str(fold) + "_fold", str(e) + "_ep"
                 )
                 checker.train1_inference(
-                    reset_models=False, epochs=config.interval, root=root_
+                    reset_models=False,
+                    epochs=config.epochs_interval,
+                    root=root_,
+                    epochs_interval_evaluation=config.epochs_interval_evaluation,
                 )
-                checker.train2_coherence(epochs=config.epochs[1], root=root_)
+                checker.train2_coherence(
+                    epochs=config.epochs[1],
+                    root=root_,
+                    epochs_interval_evaluation=config.epochs_interval_evaluation,
+                )
                 df_performance_coherence = df_performance_coherence.append(
                     {
                         "trait": trait,
@@ -114,7 +129,7 @@ for distance in config.distances:
                 df_performance_coherence.to_excel(
                     os.path.join(root, "performances_coherence.xlsx"), index=False
                 )
-                e += config.interval
+                e += config.epochs_interval
 
     df_performance_coherence.groupby(["trait", "fold"]).max(
         "best_r2"

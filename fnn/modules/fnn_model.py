@@ -109,6 +109,7 @@ class FNNModel:
         batch_size=32,
         root=None,
         verbose=2,
+        epochs_interval_evaluation=1,
     ):
         """
         Fit on training set and predict on test set.
@@ -133,6 +134,8 @@ class FNNModel:
             path to which save model's performances.
         verbose: int
             verbose attriute of keras fit method.
+        epochs_interval_evaluation: int
+            If test set is not None, training will stop after each epochs_interval_evaluation to evaluate performances on test set.
 
         Attributes
         -------
@@ -149,9 +152,9 @@ class FNNModel:
         best_mse = 1000
         if root is not None:
             create_dir(root)
-        for e in range(0, epochs):
+        for e in range(0, epochs, epochs_interval_evaluation):
             self.model.fit(
-                epochs=1,
+                epochs=epochs_interval_evaluation,
                 batch_size=batch_size,
                 x=train_inputs,
                 y=train_outputs,
@@ -161,9 +164,13 @@ class FNNModel:
                 pred = self.model.predict(test_inputs)
                 mse = sklearn.metrics.mean_squared_error(test_outputs, pred)
                 r2 = sklearn.metrics.r2_score(test_outputs, pred)
-                self.predictions.append(pred)
-                self.mse.append(mse)
-                self.r2.append(r2)
+                self.predictions = (
+                    self.predictions
+                    + [-100] * (epochs_interval_evaluation - 1)
+                    + [pred]
+                )
+                self.mse = self.mse + [100] * (epochs_interval_evaluation - 1) + [mse]
+                self.r2 = self.r2 + [-100] * (epochs_interval_evaluation - 1) + [r2]
                 print(r2, "\t", mse)
                 if mse < best_mse:
                     best_mse = mse
