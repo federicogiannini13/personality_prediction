@@ -1,11 +1,11 @@
 import vocab
-from fnn import preprocessing
+from fnn.modules import preprocessing
 import pickle
 from settings import ROOT_DIR
 import os
 import sys
 
-sys.path.insert(0, "../")
+sys.path.insert(0, "../../")
 
 
 class Data_Loader:

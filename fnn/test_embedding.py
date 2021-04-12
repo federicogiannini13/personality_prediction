@@ -1,7 +1,7 @@
 import os
-from fnn import data_loader
+from fnn.modules import data_loader
 import pandas as pd
-from fnn.config.main_test_embedding_config import config
+from fnn.config.test_embedding_config import config
 from utils import create_dir
 import sys
 

@@ -1,5 +1,5 @@
 from utils import create_dir
-from embedding_tuning import text_preprocessing
+from embedding_tuning.modules import text_preprocessing
 from sklearn.preprocessing import StandardScaler
 from settings import file_reviews as file_reviews_cfg
 import pickle
@@ -9,7 +9,7 @@ import json
 import numpy as np
 import sys
 
-sys.path.insert(0, "../")
+sys.path.insert(0, "../../")
 
 
 class ReviewsLoader:

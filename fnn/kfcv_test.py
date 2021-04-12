@@ -1,6 +1,6 @@
 import os
-from fnn.config.main_kfcv_test_config import config
-from fnn import data_loader, fnn_model
+from fnn.config.kfcv_test_config import config
+from fnn.modules import data_loader, fnn_model
 import pandas as pd
 import numpy as np
 import sys
