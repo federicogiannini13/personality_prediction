@@ -286,7 +286,7 @@ class Preprocessing:
                 canc.append(i)
             else:
                 self.words_unknown.append(w)
-                self.dict_unknown[w] = i
+                self.dict_unknown[w] = len(self.words_unknown)-1
         canc = np.asarray(canc)
         for i in range(0, canc.shape[0]):
             self.embedding_unknown.pop(canc[i])

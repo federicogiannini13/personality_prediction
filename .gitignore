@@ -12,4 +12,4 @@ __pycache__/
 *.xml
 .idea/*
 .idea
-**/.yaml
+**/*.yaml
