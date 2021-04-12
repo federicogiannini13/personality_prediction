@@ -27,4 +27,9 @@ config.load_reviews_from_scratch = False
 config.tune_embedding = True
 # use True to train the model, use False otherwise (eg if you just want to load reviews).
 
-config = load_yaml_config(config, os.path.join(os.path.dirname(os.path.abspath(__file__)), "main_coherence_test_config.yaml"))
+config = load_yaml_config(
+    config,
+    os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "main_coherence_test_config.yaml"
+    ),
+)

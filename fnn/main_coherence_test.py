@@ -44,7 +44,10 @@ for distance in config.distances:
             dl.data[cont_tr].initialize_data_kfolds_cv(fold)
             dl.data[cont_tr].search_unknown_neighbors(distance=distance)
             root_ = os.path.join(
-                root, str(trait) + "_trait", str(fold) + "_fold", str(config.epochs[0]) + "_ep"
+                root,
+                str(trait) + "_trait",
+                str(fold) + "_fold",
+                str(config.epochs[0]) + "_ep",
             )
             checker = coherence_checker.CoherenceChecker(
                 inputs=dl.data[cont_tr].train_inputs,

@@ -9,11 +9,17 @@ sys.path.insert(0, "../")
 
 df_performance = pd.DataFrame(columns=["trait", "fold", "best_epoch", "mse", "r2"])
 base_root = os.path.join(
-    config.OUTPUTS_DIR, "outputs", config.embedding_name, "KFCV", str(config.folds_number) + "_folds"
+    config.OUTPUTS_DIR,
+    "outputs",
+    config.embedding_name,
+    "KFCV",
+    str(config.folds_number) + "_folds",
 )
 
 dl = data_loader.Data_Loader(
-    traits=config.ocean_traits, embedding_name=config.embedding_name, k_folds=config.folds_number
+    traits=config.ocean_traits,
+    embedding_name=config.embedding_name,
+    k_folds=config.folds_number,
 )
 
 models = []

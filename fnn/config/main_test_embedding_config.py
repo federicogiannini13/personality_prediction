@@ -18,4 +18,9 @@ config.ocean_traits = [0, 1, 2, 3, 4]
 config.OUTPUTS_DIR = None
 # The base path in which tests' outputs will be saved. Set as None if you want to store them in project's dir.
 
-config = load_yaml_config(config, os.path.join(os.path.dirname(os.path.abspath(__file__)), "main_test_embdding_config.yaml"))
+config = load_yaml_config(
+    config,
+    os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "main_test_embdding_config.yaml"
+    ),
+)
