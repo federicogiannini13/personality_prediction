@@ -79,7 +79,7 @@ for distance in config.distances:
                     os.path.join(base_root, "performances_kfolds.xlsx"), index=False
                 )
             checker.train2_coherence(
-                epochs=config.epochs[1],
+                epochs=config.epochs_train2,
                 root=root_,
                 epochs_interval_evaluation=config.epochs_interval_evaluation,
             )
@@ -111,7 +111,7 @@ for distance in config.distances:
                     epochs_interval_evaluation=config.epochs_interval_evaluation,
                 )
                 checker.train2_coherence(
-                    epochs=config.epochs[1],
+                    epochs=config.epochs_train2,
                     root=root_,
                     epochs_interval_evaluation=config.epochs_interval_evaluation,
                 )
