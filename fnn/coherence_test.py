@@ -42,7 +42,7 @@ for distance in config.distances:
     for fold in range(0, config.folds_number):
         for cont_tr, trait in enumerate(config.ocean_traits):
             dl.data[cont_tr].initialize_data_kfolds_cv(fold)
-            dl.data[cont_tr].search_unknown_neighbors(distance=distance)
+            dl.data[cont_tr].search_unknown_neighbors(distance=distance, max_neigs=config.max_neigs)
             root_ = os.path.join(
                 root,
                 str(trait) + "_trait",
