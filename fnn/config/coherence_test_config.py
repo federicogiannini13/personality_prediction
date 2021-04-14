@@ -20,7 +20,7 @@ config.max_neigs = 12500
 config.batch_size = 32
 # Training batch size of fnn models.
 config.epochs = [50, 300]
-epochs_train2 = 300
+config.epochs_train2 = 300
 config.epochs_interval = 50
 # Epochs is a list of len=2 containing the range of epochs after which stop training of M1 models and train a new model M2.
 # M1's training will stop after epochs[0]+n*interval such that  n>0 and epochs[0]+n*interval<=epochs[1]
