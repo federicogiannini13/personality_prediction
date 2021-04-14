@@ -3,6 +3,8 @@ from fnn.config.coherence_test_config import config
 from fnn.modules import data_loader, coherence_checker
 import pandas as pd
 import sys
+import vocab
+from settings import ROOT_DIR
 
 sys.path.insert(0, "../")
 
@@ -21,13 +23,33 @@ if config.test1:
     df_performance_kfolds = pd.DataFrame(
         columns=["trait", "fold", "best_epoch", "mse", "r2"]
     )
-base_root = os.path.join(
-    config.OUTPUTS_DIR,
-    "outputs",
-    config.embedding_name,
-    "coherence_test",
-    str(config.folds_number) + "_folds",
-)
+
+if config.embedding_dict_to_use is not None:
+    import pickle
+
+    embedding_path = os.path.join(ROOT_DIR, "data", config.embedding_dict_to_use)
+    with open(os.path.join(embedding_path, "words.pickle"), "rb") as f:
+        words_to_select = pickle.load(f)
+    embedding_dict_str = config.embedding_dict_to_use + "_dict"
+    base_root = os.path.join(
+        config.OUTPUTS_DIR,
+        "outputs",
+        config.embedding_name,
+        embedding_dict_str,
+        "coherence_test",
+        str(config.folds_number) + "_folds",
+    )
+else:
+    words_to_select = None
+    embedding_dict_str = ""
+    base_root = os.path.join(
+        config.OUTPUTS_DIR,
+        "outputs",
+        config.embedding_name,
+        embedding_dict_str,
+        "coherence_test",
+        str(config.folds_number) + "_folds",
+    )
 
 for distance in config.distances:
     root = os.path.join(base_root, str(distance) + "_dist")
@@ -36,13 +58,16 @@ for distance in config.distances:
         distance=distance,
         embedding_name=config.embedding_name,
         k_folds=config.folds_number,
-        max_neigs=config.max_neigs
+        max_neigs=config.max_neigs,
+        words_to_select=words_to_select,
     )
 
     for fold in range(0, config.folds_number):
         for cont_tr, trait in enumerate(config.ocean_traits):
             dl.data[cont_tr].initialize_data_kfolds_cv(fold)
-            dl.data[cont_tr].search_unknown_neighbors(distance=distance, max_neigs=config.max_neigs)
+            dl.data[cont_tr].search_unknown_neighbors(
+                distance=distance, max_neigs=config.max_neigs
+            )
             root_ = os.path.join(
                 root,
                 str(trait) + "_trait",
@@ -143,6 +168,7 @@ for distance in config.distances:
             + str(distance)
             + "dist_"
             + config.embedding_name
+            + embedding_dict_str
             + ".xlsx",
         ),
         index=False,
@@ -160,6 +186,7 @@ for distance in config.distances:
                 + str(distance)
                 + "dist_"
                 + config.embedding_name
+                + embedding_dict_str
                 + ".xlsx",
             ),
             index=False,

@@ -15,7 +15,7 @@ if load_reviews_from_scratch:
         dict_ocean=v.dict_known.copy(),
         weights=v.weights.copy(),
         voc_dim=voc_dim,
-        train=2 / 3,
+        train_prop=2 / 3,
         num_reviews=num_reviews,
         shuffle=shuffle,
         embedding_name=embedding_name,

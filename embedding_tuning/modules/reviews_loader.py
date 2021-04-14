@@ -22,14 +22,14 @@ class ReviewsLoader:
         dict_emb,
         dict_ocean,
         weights,
-        voc_dim=None,
-        train=None,
+        voc_dim=60000,
+        train_prop=None,
         file_reviews=None,
-        num_reviews=None,
+        num_reviews=300000,
         save_rev=False,
         shuffle=True,
         output_type="mean",
-        embedding_name=None,
+        embedding_name="new_tuned_embedding",
     ):
         """
         Init method that reads and preprocess Yelp reviews. It follows these steps:
@@ -42,49 +42,49 @@ class ReviewsLoader:
         Parameters
         ----------
         dict_emb: dict
-            dict containing, for each term in the embedding, its index in the vocabulary.
+            The dict containing, for each term in the embedding, its index in the vocabulary.
         dict_ocean: dict
-            dict containing, for each known term, its five personality traits' scores.
+            The dict containing, for each known term, its five personality traits' scores.
         weights: numpy array
-            matrix containg, in the i-th position, the 100-dimensional embedding representation of the i-th term in embedding vocaboluary.
-        voc_dim: int
-            the desired dimension of tuned embedding vocabulary.
-        train: float
-            train proportion for the CNN model.
-        file_reviews: path
-            the path of yelp reviews' json file (yelp_academic_dataset_review.json)
-        num_reviews: int
-            the number of reviews to be loadead.
-        save_rev: bool
-            true if you want to keep the original reviews in reviews attribute.
-        shuffle: bool
+            The matrix containg, in the i-th position, the 100-dimensional embedding representation of the i-th term in embedding vocaboluary.
+        voc_dim: int, default: 60000
+            The desired dimension of tuned embedding vocabulary.
+        train_prop: float, default: None
+            The train proportion for the CNN model.
+        file_reviews: path, default: None
+            The path of yelp reviews' json file (yelp_academic_dataset_review.json)
+        num_reviews: int, default: 300000
+            The number of reviews to be loadead.
+        save_rev: bool, default: False
+            True if you want to keep the original reviews in reviews attribute.
+        shuffle: bool, default: True
             True if you want to shuffle the reviews before reading them. False if you want to take the first num_reviews.
-        output_type: str
+        output_type: str, default: 'mean'
             'mean' if the target of a review, for each personality trait, is the mean of known terms' scores.
             'sum' if the target of a review, for each personality trait, is the sum of known terms' scores.
-        embedding_name: str
+        embedding_name: str, default: 'new_tuned_embedding'
             The name of the dir to be created that stores the tuned embedding.
 
         Attributes
         ----------
         dict_emb: dict
-            dict containing, for each term in the embedding, its index in the vocabulary.
+            The dict containing, for each term in the embedding, its index in the vocabulary.
         dict_ocean: dict
-            dict containing, for each known term, its five personality traits' scores.
+            The dict containing, for each known term, its five personality traits' scores.
         words: list
-            list containing in the i-th position the word with index i in the embedding vocabulary.
+            The list containing in the i-th position the word with index i in the embedding vocabulary.
         weights: numpy array
-            matrix containg, in the i-th position, the 100-dimensional embedding representation of the i-th term in embedding vocaboluary.
+            The matrix containg, in the i-th position, the 100-dimensional embedding representation of the i-th term in embedding vocaboluary.
         train_inputs: numpy array
-            numpy array containing the encoded reviews of the training set.
+            The numpy array containing the encoded reviews of the training set.
         test_inputs: numpy array
-            numpy array containing the encoded reviews of the test set.
+            The numpy array containing the encoded reviews of the test set.
         train_outputs: numpy array
-            numpy array with shape (5, train_size) containing reviews' scores of training set
+            The numpy array with shape (5, train_size) containing reviews' scores of training set
         test_outputs: numpy array
-            numpy array with shape (5, test_size) containing reviews' scores of test set
+            The numpy array with shape (5, test_size) containing reviews' scores of test set
         frequencies: dict
-            dict containing for each word of dict_emb its frequency in the selected reviews.
+            The dict containing for each word of dict_emb its frequency in the selected reviews.
         """
         self.file_reviews = file_reviews_cfg
         self.reviews = []
@@ -93,13 +93,7 @@ class ReviewsLoader:
         self.weights = []
         self.dict_ocean = {}
         self.dict_emb = {}
-        self.num_reviews = 10 ** 3
         self.frequencies = {}
-        self.voc_dim = 6 * (10 ** 4)
-        self.dstype = np.float32
-        self.reviews_size = 5996996
-        self.embedding_name = "new_tuned_embedding"
-
 
         self.dict_emb = dict_emb
         self.dict_ocean = dict_ocean
@@ -107,17 +101,15 @@ class ReviewsLoader:
             self.weights = weights
         if file_reviews is not None:
             self.file_reviews = file_reviews
-        if num_reviews is not None:
-            self.num_reviews = num_reviews
+        self.num_reviews = num_reviews
         if voc_dim is not None:
             self.voc_dim = voc_dim
-        if train is not None:
-            self.train = train
-            self.sep = int(self.train * self.num_reviews)
+        if train_prop is not None:
+            self.train_prop = train_prop
+            self.sep = int(self.train_prop * self.num_reviews)
         else:
             self.sep = None
-        if embedding_name is not None:
-            self.embedding_name = embedding_name
+        self.embedding_name = embedding_name
         self.embedding_path = os.path.join(ROOT_DIR, "data", embedding_name)
         create_dir(self.embedding_path)
 
@@ -316,13 +308,13 @@ def read_reviews_loaded(embedding_name="new_tuned_embedding"):
 
     Parameters
     ----------
-    embedding_name: str
-        the embedding name corresponding to the directory's name in which are stored its data.
+    embedding_name: str, default: 'new_tuned_embedding'
+        The embedding name corresponding to the directory's name in which are stored its data.
 
     Returns
     -------
     l : Object
-        object containing read data.
+        The object containing read data.
 
     """
 

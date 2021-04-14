@@ -26,12 +26,12 @@ class TextPreProcessing:
         Parameters
         ----------
         sentence: str
-            sentence to be lemmatized.
+            The sentence to be lemmatized.
 
         Returns
         -------
         lemmatized_words: list
-            a list of string containing the lemmatized tokens.
+            The list of string containing the lemmatized tokens.
 
         """
         sentence_words = nltk.word_tokenize(sentence)

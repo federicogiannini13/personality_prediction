@@ -24,27 +24,27 @@ class FNNModel:
 
         Parameters
         ----------
-        input_dim: int
-            dimension of the input layer (embedding size).
-        dropout: float
-            value of dropout for the dropout layer.
+        input_dim: int, default: 100
+            The dimension of the input layer (embedding size).
+        dropout: float, default: 0.3
+            The value of dropout for the dropout layer.
 
         Attributes
         ----------
         self.model: Keras Model
-            the model to be trained.
+            The model to be trained.
         self.input_layer: tensorflow.keras.layers.Input
-            the model's input layer.
+            The model's input layer.
         self.h1_layer: tensorflow.keras.layers.Dense
-            the first model's hidden layer.
+            The first model's hidden layer.
         self.h2_layer: tensorflow.keras.layers.Dense
-            the second model's hidden layer.
+            The second model's hidden layer.
         self.h3_layer: tensorflow.keras.layers.Dense
-            the third model's hidden layer.
+            The third model's hidden layer.
         self.dropout_layer: tensorflow.keras.layers.Dropout
-            the model's dropout layer.
+            The model's dropout layer.
         self.output_layer: tensorflow.keras.layers.Dense
-            the model's output layer.
+            The model's output layer.
         """
         self.input_dim = input_dim
         self.dropout = dropout
@@ -116,35 +116,35 @@ class FNNModel:
 
         Parameters
         ----------
-        train_inputs: numpy array
-            numpy array with shape (training_size, embedding_size) representing the terms to which the model will be trained.
-        train_outputs: numpy array
-            numpy array with len training size containing the targets of training set.
-        test_inputs: numpu array, default=None
-            numpy array with shape (test_size, embedding_size) representing the terms of which the model, after each training epoch, will predict scores.
+        train_inputs: numpy.array
+            The numpy array with shape (training_size, embedding_size) representing the terms to which the model will be trained.
+        train_outputs: numpy.array
+            The numpy array with len training size containing the targets of training set.
+        test_inputs: numpu array, default: None
+            The numpy array with shape (test_size, embedding_size) representing the terms of which the model, after each training epoch, will predict scores.
             If None the model will not predict anything.
-        test_outputs: numpu array, default=None
-            numpy array with len test size containing the targets of test set.
+        test_outputs: numpu array, default: None
+            The numpy array with len test size containing the targets of test set.
             If None the model will not predict anything.
-        epochs: int, default=100
-            training epochs.
-        batch_size: int, default=32
-            training batch size.
-        root: str or path.
-            path to which save model's performances.
-        verbose: int
-            verbose attriute of keras fit method.
-        epochs_interval_evaluation: int
+        epochs: int, default: 100
+            The training epochs.
+        batch_size: int, default: 32
+            The training batch size.
+        root: str or path, default: None.
+            The path to which save model's performances.
+        verbose: int, default: 2
+            The Keras fit method's verbose attribute.
+        epochs_interval_evaluation: int, default: 1
             If test set is not None, training will stop after each epochs_interval_evaluation to evaluate performances on test set.
 
         Attributes
         -------
         self.mse: list
-            mse values evaluated, after each training epoch, on test set's scores predicted by the model.
+            The mse values evaluated, after each training epoch, on test set's scores predicted by the model.
         self.r2: list
-            r2 scores evaluated, after each training epoch, on test set's scores predicted by the model.
+            The r2 scores evaluated, after each training epoch, on test set's scores predicted by the model.
         self.predictions: list
-            test set's scores predicted by the model after each training epoch.
+            The test set's scores predicted by the model after each training epoch.
         """
         self.mse = []
         self.r2 = []

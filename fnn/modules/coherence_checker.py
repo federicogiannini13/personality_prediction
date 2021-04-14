@@ -27,45 +27,45 @@ class CoherenceChecker:
         """
         Parameters
         ----------
-        inputs: numpy array
-            numpy array with shape (traning_size, n_features) representing training set's known terms.
+        inputs: numpy.array
+            The numpy array with shape (traning_size, n_features) representing training set's known terms.
         outputs: list
-            list of the numpy arrays representing personality scores for training set's known terms.
-        inputs_neig: numpy array, default=None
-            numpy array with shape (n_unknown_terms, n_features) represening unknown terms to which perform inference and train2.
+            The list of the numpy arrays representing personality scores for training set's known terms.
+        inputs_neig: numpy array, default: None
+            The numpy array with shape (n_unknown_terms, n_features) represening unknown terms to which perform inference and train2.
             Use None if you don't want to perform train2.
-        test_inputs: numpy array, default=None
-            numpy array with shape (test_size, n_features) representing test set's known terms.
+        test_inputs: numpy array, default: None
+            The numpy array with shape (test_size, n_features) representing test set's known terms.
             Use None if you want to perform coherence evaluation on training set.
-        test_outputs: list, default=None
-            list of the five numpy arrays representing personality scores for test set's known terms.
+        test_outputs: list, default: None
+            The list of the five numpy arrays representing personality scores for test set's known terms.
             Use None if you want to perform coherence evaluation on training set.
-        batch_size: int, default=32
-            training batch_size of models.
-        ocean_traits: list, default=[0, 1, 2, 3, 4]
-            Personality traits to which perform test. O: 0, C: 1, E: 2, A: 3, N: 4.
+        batch_size: int, default: 32
+            The training batch size of models.
+        ocean_traits: list, default: [0, 1, 2, 3, 4]
+            The personality traits to which perform test: O: 0, C: 1, E: 2, A: 3, N: 4.
         test1: bool
             True if you want to estimate performances of M1's training using test_inputs and test_outputs (only valid if test_inputs and test_outputs are not None).
 
         Attributes
         ----------
         self.inputs: numpy array
-            numpy array with shape (traning_size, n_features) representing training set's known terms.
+            The numpy array with shape (traning_size, n_features) representing training set's known terms.
         self.outputs: list
-            list of the numpy arrays representing personality scores for training set's known terms.
+            The list of the numpy arrays representing personality scores for training set's known terms.
         self.inputs_neig: numpy array
-            numpy array with shape (n_unknown_terms, n_features) represening unknown terms to which perform inference and train2.
+            The numpy array with shape (n_unknown_terms, n_features) represening unknown terms to which perform inference and train2.
             It is None in the case of no train2.
         self.test_inputs: numpy array
-            numpy array with shape (test_size, n_features) representing test set's known terms.
+            The numpy array with shape (test_size, n_features) representing test set's known terms.
             It is equal to self.train_inputs in case of performing coherence evaluation on training set.
         self.test_outputs: list
-            list of the five numpy arrays representing personality scores for test set's known terms.
+            The list of the five numpy arrays representing personality scores for test set's known terms.
             It is equal to self.train_outputs in case of performing coherence evaluation on training set.
         self.batch_size: int
-            training batch_size of models.
+            The training batch size of models.
         ocean_traits: list
-            Personality traits to which perform test. O: 0, C: 1, E: 2, A: 3, N: 4
+            The personality traits to which perform test: O: 0, C: 1, E: 2, A: 3, N: 4
         """
         self.inputs = inputs.copy()
         self.original_outputs = outputs.copy()
@@ -104,33 +104,33 @@ class CoherenceChecker:
 
         Parameters
         ----------
-        epochs: int, default=100
-            training epochs.
-        root: str or path, default=None
-            path to which save performance and weights of train1. Use None to not save anything.
-        reset_models: True
-            use True to-reinitialize models' weights.
-        epochs_interval_evaluation: int
-            if self.test1=True, M1's training will stop after each epochs_interval_evaluation epochs to evaluate performances.
+        epochs: int, default: 100
+            The raining epochs.
+        root: str or path, default: None
+            The path to which save performance and weights of train1. Use None to not save anything.
+        reset_models: bool, default: True
+            use True to reinitialize models' weights.
+        epochs_interval_evaluation: int, default: 1
+            If self.test1=True, M1's training will stop after each epochs_interval_evaluation epochs to evaluate performances.
 
         Attributes
         -------
         self.models: list of FFNModel
-            list containing the M1 models of train1, one for each personality trait.
+            The list containing the M1 models of train1, one for each personality trait.
         self.outputs_neig: list
-            list containing M1 models' scores predictions on self.inputs_neig after train1.
+            The list containing M1 models' scores predictions on self.inputs_neig after train1.
         self.best_epochs_train1: list
-            best performing train1 epochs for each model (considering predictions of M1 models on test set).
+            The best performing train1 epochs for each model (considering predictions of M1 models on test set).
         self.best_weights_train1: list
-            weights of the best performing train1 epochs for each model (considering predictions of M1 models on test set).
+            The weights of the best performing train1 epochs for each model (considering predictions of M1 models on test set).
         self.best_mse_train1: list
-            mse score of the best performing train1 epochs for each model (considering predictions of M1 models on test set).
+            The mse score of the best performing train1 epochs for each model (considering predictions of M1 models on test set).
         self.best_r2_train1: list
-            r2 score of the best performing train1 epochs for each model (considering predictions of M1 models on test set).
+            The r2 score of the best performing train1 epochs for each model (considering predictions of M1 models on test set).
         self.all_mse_train1: list
-            mse score of all train1 epochs for each model (considering predictions of M1 models on test set).
+            The mse score of all train1 epochs for each model (considering predictions of M1 models on test set).
         self.all_r2_train1: list
-            r2 score of all train1 epochs for each model (considering predictions of M1 models on test set).
+            The r2 score of all train1 epochs for each model (considering predictions of M1 models on test set).
         """
         self.outputs_neig = []
         self.final_weights_train1 = []
@@ -214,27 +214,27 @@ class CoherenceChecker:
 
         Parameters
         ----------
-        epochs: int
+        epochs: int, default: 100
             train2 epochs number.
-        root: str or path.
-            path to which save performance and weights of train2. Use None to not save anything.
-        epochs_interval_evaluation: int
+        root: str or path, default: None
+            The path to which save performance and weights of train2. Use None to not save anything.
+        epochs_interval_evaluation: int, default: 1
             M2's training will stop after each epochs_interval_evaluation epochs to evaluate performances.
 
         Attributes
         -------
         self.best_epochs: list
-            best performing train2 epochs for each model (considering predictions of M2 models on test set).
+            The best performing train2 epochs for each model (considering predictions of M2 models on test set).
         self.best_weights_train2: list
-            weights of the best performing train2 epochs for each model (considering predictions of M1 models on test set).
+            The weights of the best performing train2 epochs for each model (considering predictions of M1 models on test set).
         self.best_mse_train2: list
-            mse score of the best performing train2 epochs for each model (considering predictions of M2 models on test set).
+            The mse score of the best performing train2 epochs for each model (considering predictions of M2 models on test set).
         self.best_r2_train1: list
-            r2 score of the best performing train2 epochs for each model (considering predictions of M2 models on test set).
+            The r2 score of the best performing train2 epochs for each model (considering predictions of M2 models on test set).
         self.all_mse_train1: list
-            mse score of all train2 epochs for each model (considering predictions of M2 models on test set).
+            The mse score of all train2 epochs for each model (considering predictions of M2 models on test set).
         self.all_r2_train1: list
-            r2 score of all train2 epochs for each model (considering predictions of M2 models on test set).
+            The r2 score of all train2 epochs for each model (considering predictions of M2 models on test set).
 
         """
         self.all_mse_train2 = []

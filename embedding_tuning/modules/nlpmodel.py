@@ -26,29 +26,17 @@ class NLPModel:
     The class representing the CNN model that learns the embedding of a specific personality trait.
     """
 
-    features_number = 200
-    window_size = 5
-    filters_number = 100
-    hidden_units = 50
-    epochs_number = 10
-    batch_size = 32
-
-    # parameters
-    voc_dim = 1000
-    sentence_length = 20
-    documents_number = 591
-
     def __init__(
         self,
-        train_inputs=None,
-        train_outputs=None,
+        train_inputs,
+        train_outputs,
         weights=None,
-        voc_dim=None,
-        features_number=None,
-        window_size=None,
-        filters_number=None,
-        hidden_units=None,
-        batch_size=None,
+        voc_dim=60000,
+        features_number=200,
+        window_size=5,
+        filters_number=100,
+        hidden_units=50,
+        batch_size=32,
         sentence_length=None,
         train_zeros=False,
     ):
@@ -57,39 +45,39 @@ class NLPModel:
 
         Parameters
         ----------
-        train_inputs: numpy array
-            the numpy array containing the encoded reviews of training set.
-        train_outputs: numpy array
-            the numpy array with len train_size, containing the reviews target.
-        weights: list
+        train_inputs: numpy.array
+            The numpy.array containing the encoded reviews of training set.
+        train_outputs: numpy.array
+            The numpy.array with len train_size, containing the reviews target.
+        weights: list, default: None
             In the case of embedding tuning, this parameter represents the list, with shape (voc_dim, embedding_feature_number) representing the initial weights of the embedding to be tuned.
             weights[i] must be the representation in the original embedding of term with index=i.
             If weights is given, the model will tune the embedding.
-        voc_dim: int
+        voc_dim: int, default: 60000
             In the case of embedding's learning from scratch, this parameter represents the vocabolary size.
-        features_number: int
+        features_number: int, default: 200
             In the case of embedding's learning from scratch, this parameter represents the embedding's features number
-        window_size: int
+        window_size: int, default: 5
             The windows dimension of convolution.
-        filters_number: int
-            Number of convolution's filters.
-        hidden_units: int
-            Number of units in the hidden layer.
-        batch_size: int
-            Training's batch size.
-        sentence_length: int
-            Max length of a sentence. If none is set to the length of the longest sentence in training set + 20.
-        train_zeros: bool
-            True if you want to train the representation of padding token (tokens added to pad each review in such a way that all the reviews have the same lenght).
+        filters_number: int, default: 100
+            The  number of convolution's filters.
+        hidden_units: int, default: 50
+            The number of units in the hidden layer.
+        batch_size: int, default: 32
+            The training's batch size.
+        sentence_length: int, default: None
+            The maximum length of a sentence. If none is set to the length of the longest sentence in training set + 20.
+        train_zeros: bool, default: False
+            True if you want to train the representation of padding tokens (tokens added to pad each review in such a way that all the reviews have the same lenght).
 
         Parameters
         ----------
         self.model: tensorflow.keras.models.Sequential
             The model to be trained
-        self.train_inputs: numpy array
-            The numpy array containing the encoded reviews of training set.
-        self.train_outputs: numpy array
-            The numpy array with len train_size, containing the reviews target.
+        self.train_inputs: numpy.array
+            The numpy.array containing the encoded reviews of training set.
+        self.train_outputs: numpy.array
+            The numpy.array with len train_size, containing the reviews target.
         self.embedding_layer: tensorflow.keras.layers.Embedding
             The model's embedding layer.
         self.conv_layer: tensorflow.keras.layers.Conv2D
@@ -102,22 +90,15 @@ class NLPModel:
             The model's output layer.
         """
 
-        if voc_dim is not None:
-            self.voc_dim = voc_dim
-        if features_number is not None:
-            self.features_number = features_number
-        if window_size is not None:
-            self.window_size = window_size
-        if filters_number is not None:
-            self.filters_number = filters_number
-        if hidden_units is not None:
-            self.hidden_units = hidden_units
-        if batch_size is not None:
-            self.batch_size = batch_size
+        self.voc_dim = voc_dim
+        self.features_number = features_number
+        self.window_size = window_size
+        self.filters_number = filters_number
+        self.hidden_units = hidden_units
+        self.batch_size = batch_size
 
         self.train_zeros = train_zeros
 
-        assert not train_inputs is None
         if sentence_length is not None:
             self.sentence_length = sentence_length
         else:
@@ -324,25 +305,25 @@ class NLPModel:
 
         Parameters
         ----------
-        test_inputs: numpy array
-            the numpy array containing the encoded reviews of test set.
-        test_outputs: numpy array
-            the numpy array with len test_size, containing the reviews target.
-        root_path: path
+        test_inputs: numpy.array
+            the numpy.array containing the encoded reviews of test set.
+        test_outputs: numpy.array
+            the numpy.array with len test_size, containing the reviews target.
+        root_path: path, default: None
             the path in which store weights and metrics
-        epochs_number: int
+        epochs_number: int, default: 10
             train epochs' number.
 
         Parameters
         -------
         self.predictions: list
-            List containing model's predictions on test set after each epochs.
+            The list containing model's predictions on test set after each epochs.
         self.r2: list
-            List containing model's predictions' estimated R2 on test set after each training epochs.
+            The list containing model's predictions' estimated R2 on test set after each training epochs.
         self.mse: list
-            List containing model's predictions' estimated MSE on test set after each training epochs.
+            The list containing model's predictions' estimated MSE on test set after each training epochs.
         self.weights: list
-            List containing model's weights after each training epochs.
+            The list containing model's weights after each training epochs.
 
         """
         if root_path is not None:

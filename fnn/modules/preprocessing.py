@@ -27,6 +27,7 @@ class Preprocessing:
         train_prop_holdout=None,
         random_state=42,
         standardize_holdout=True,
+        words_to_select=None,
     ):
         """
         Init method that initialize embedding dictionaries.
@@ -38,20 +39,22 @@ class Preprocessing:
             The dictionary of known terms that, for each term, contains a list of the five personality traits' scores.
         global_embedding: list
             The embedding representation. List of size voc_dim, that contains in the i-th position the embedding_size representation of the i-th word in the dict_emb.
-        dtype: numpy dtype
+        dtype: numpy.dtype, default: numpy.float32
             The numpy dtype of inputs.
-        k_folds: int, default=None
+        k_folds: int, default: None
             The number of folds in case of k-fold cross-validation. Use None if you are not using K-fold cv.
-        words: list, default=None
+        words: list, default: None
             The words list of the embedding that stores in the i-th position the i-th word of embedding vocabulary.
-        shuffle: bool, default=True
+        shuffle: bool, default: True
             True if you want to shuffle data before splitting in train and test.
-        train_prop_holdout: float, default=None
-            The proportion of training set on the known terms' set, in case of Holdout validation. Use None if you are not using K-fold cv.
-        random_state: int, default=42
+        train_prop_holdout: float, default: None
+            The proportion of training set on the known terms' set, in case of Holdout validation. Use None if you are not using K-folds cv.
+        random_state: int, default: 42
             The seed of shuffling. Use None if you don't want the experiment to be repeatable.
-        standardize_holdout: bool, default=True
+        standardize_holdout: bool, default: True
             In case of Holdout validation, use True if you want to standardize targets.
+        words_to_select: list, default: None
+            If you want to select only a subset of words, set this parameter. Use None otherwise.
 
         Attributes
         ----------
@@ -79,6 +82,10 @@ class Preprocessing:
         self.tree_known = None
         self.random_state = random_state
         self.shuffle = shuffle
+
+        if words_to_select is not None:
+            self._filter_words(words_to_select)
+
         self._initialize_dicts_known()
 
         if k_folds is not None:
@@ -98,6 +105,32 @@ class Preprocessing:
             self.initialize_data_holdout(standardize=standardize_holdout)
 
         print("____ PREPROCESSING DONE")
+
+    def _filter_words(self, words_to_select):
+        print("... Filtering words")
+        words = []
+        embedding = []
+        dict_emb = {}
+        cont = 0
+        print("Words to select: ", len(words_to_select))
+        for w in self.words:
+            if w in words_to_select:
+                dict_emb[w] = cont
+                words.append(w)
+                embedding.append(self.global_embedding[self.dict_emb[w]])
+                cont += 1
+        print("Words selected: ", len(words))
+        print("Embedding selected: ", len(embedding))
+        words_known = list(self.dict_known_scores.keys())
+        print("Initial Words known: ", len(words_known))
+        for w in words_known:
+            if w not in words_to_select:
+                del self.dict_known_scores[w]
+        print("Final words known", len(self.dict_known_scores[w]))
+        self.words = words
+        self.global_embedding = embedding
+        self.dict_emb = dict_emb
+        print("-> words filtered")
 
     def _initialize_dicts_known(self):
         self.embedding_known = []
@@ -127,27 +160,27 @@ class Preprocessing:
         ----------
         fold: int
             the fold number of the KFCV round starting from 0.
-        standardize: bool, default=True
+        standardize: bool, default: True
             True if you want to standardize train and test outputs.
 
         Attributes
         -------
         self.train_inputs: numpy array
-            numpy array with shape (train_size, embedding_size) that contains the embedding representations of training set.
+            The numpy array with shape (train_size, embedding_size) that contains the embedding representations of training set.
         self.train_outputs: list
-            list of the five numpy arrays representing personaliy scores for the training sample.
+            The list of the five numpy arrays representing personaliy scores for the training sample.
         self.test_inputs: numpy array
-            numpy array with shape (test_size, embedding_size) that contains embedding representations of test set.
+            The numpy array with shape (test_size, embedding_size) that contains embedding representations of test set.
         self.test_outputs: list
-            list of the five numpy arrays representing personaliy scores for the test set.
+            The list of the five numpy arrays representing personaliy scores for the test set.
         self.train_words: numpy array
-            numpy array containing the words of training set.
+            The numpy array containing the words of training set.
         self.test_words: numpy array
-            numpy array containing the words of test set.
+            The numpy array containing the words of test set.
         self.train_words_dict: dict
-            dictionary containing, for each word in the training set, its position in train_inputs and train_outputs.
+            The dictionary containing, for each word in the training set, its position in train_inputs and train_outputs.
         self.train_len: int
-            dimension of training set.
+            The dimension of training set.
         """
         train_index = self.train_index_kfolds[fold]
         test_index = self.test_index_kfolds[fold]
@@ -182,27 +215,27 @@ class Preprocessing:
 
         Parameters
         ----------
-        standardize: bool, default=True
+        standardize: bool, default: True
             True if you want to standardize train and test outputs.
 
         Attributes
         -------
-        self.train_inputs: numpy array
-            numpy array with shape (train_size, embedding_size) that contains the embedding representations of training set.
+        self.train_inputs: numpy.array
+            The numpy array with shape (train_size, embedding_size) that contains the embedding representations of training set.
         self.train_outputs: list
-            list of the five numpy arrays representing personality scores for the training set.
-        self.test_inputs: numpy array
-            numpy array with shape (test_size, embedding_size) that contains embedding representations of test set.
+            The list of the five numpy arrays representing personality scores for the training set.
+        self.test_inputs: numpy.array
+            The numpy array with shape (test_size, embedding_size) that contains embedding representations of test set.
         self.test_outputs: list
-            list of the five numpy arrays representing personality scores for the test set.
-        self.train_words: numpy array
-            numpy array containing the words of training set.
-        self.test_words: numpy array
-            numpy array containing the words of test set.
+            The list of the five numpy arrays representing personality scores for the test set.
+        self.train_words: numpy.array
+            The numpy array containing the words of training set.
+        self.test_words: numpy.array
+            The numpy array containing the words of test set.
         self.train_words_dict: dict
-            dictionary containing, for each word in the training set, its position in train_inputs and train_outputs.
+            The dictionary containing, for each word in the training set, its position in train_inputs and train_outputs.
         self.train_len: int
-            dimension of training set.
+            The imension of training set.
 
         """
         embedding_known = np.asarray(self.embedding_known)
@@ -262,7 +295,7 @@ class Preprocessing:
 
         Parameters
         ----------
-        create_tree: bool, default=True
+        create_tree: bool, default: True
             True if you want to create the tree representation of unknown terms in the embedding.
 
         Attributes
@@ -270,9 +303,9 @@ class Preprocessing:
         self.embedding_unknown: numpy.array
             The embedding representation of unknown terms. List of size len(unkwnon_terms), that contains in the i-th position the embedding_size representation of the i-th unkwnon term in the dict_unknown.
         self.words_unknown: list
-            Ordered list of unknown terms.
+            The ordered list of unknown terms.
         self.dict_unknown: dict
-            Dict of unknown terms that for each unknown term contains its index in unknown terms list.
+            The dict of unknown terms that for each unknown term contains its index in unknown terms list.
         """
         assert not self.words is None
         print("... Initializing the unknown terms' embedding")
@@ -313,21 +346,21 @@ class Preprocessing:
 
         Parameters
         ----------
-        distance: float, default=0
+        distance: float, default: 0
             The distance within which search neighbors.
             - 0: return only the nearest neighbor of each known term of training set.
             - d>0: return only unknown terms whose distance from any known terms in training set is maximum d.
             - None: return all unknown terms.
-        max_neigs: int
+        max_neigs: int, default: None
             Maximum number of nieghbors to return in the case of distance>0.
             Use None or 0 if you want to return all possible neighbors in the select distance.
 
         Attributes
         -------
         self.inputs_neig: list
-            list containing the embedding representations of the found unknown neighbors.
+            The list containing the embedding representations of the found unknown neighbors.
         self.words_neig: list
-            list containing the found unknown neighbors.
+            The list containing the found unknown neighbors.
         """
         if distance == 0:
             print("Querying the tree...")
@@ -357,17 +390,24 @@ class Preprocessing:
                         unknown_neigs.append(n)
                         unknown_neigs_distances_dict[n] = self.neighbors_query[1][i][j]
                     else:
-                        unknown_neigs_distances_dict[n] = min(self.neighbors_query[1][i][j], unknown_neigs_distances_dict[n])
-            unknown_neigs_distances = np.asarray([unknown_neigs_distances_dict[n] for n in unknown_neigs])
+                        unknown_neigs_distances_dict[n] = min(
+                            self.neighbors_query[1][i][j],
+                            unknown_neigs_distances_dict[n],
+                        )
+            unknown_neigs_distances = np.asarray(
+                [unknown_neigs_distances_dict[n] for n in unknown_neigs]
+            )
             unknown_neigs = np.asarray(unknown_neigs)
-            if max_neigs is not None and max_neigs>0:
+            if max_neigs is not None and max_neigs > 0:
                 sort_idx = np.argsort(unknown_neigs_distances)
                 unknown_neigs = np.take(unknown_neigs, sort_idx)
                 unknown_neigs_distances = np.take(unknown_neigs_distances, sort_idx)
                 unknown_neigs = unknown_neigs[0:max_neigs]
                 unknown_neigs_distances = unknown_neigs_distances[0:max_neigs]
             self.max_distance = np.max(unknown_neigs_distances)
-            self.max_distance_neig = np.take(unknown_neigs, np.argmax(unknown_neigs_distances))
+            self.max_distance_neig = np.take(
+                unknown_neigs, np.argmax(unknown_neigs_distances)
+            )
             self.unknown_neigs = unknown_neigs
             self.unknown_neigs_distances = unknown_neigs_distances
             self.inputs_neig = []
@@ -418,11 +458,11 @@ class Preprocessing:
 
     def standardize(self, test=True):
         """
-        Standardize train and test outputs
+        Standardize train and test outputs.
 
         Parameters
         ----------
-        test: bool, default=True
+        test: bool, default: True
             True if you want to standardize also test targets.
         """
         self.scaler = StandardScaler(with_mean=True, with_std=True)
@@ -444,7 +484,7 @@ class Preprocessing:
         Search the k known nearest neighbors of all unknown terms.
         Parameters
         ----------
-        k: int, default=5
+        k: int, default: 5
             numbers of nearest neighbors to be found.
 
         Attributes
@@ -480,15 +520,15 @@ class Preprocessing:
         Parameters
         ----------
         i: int
-            index of the word according to the words_unknown dictionary
+            The index of the word according to the words_unknown dictionary.
         pred: float
-            score prediction of the model
+            The model's score prediction.
         trait: int
-            personality trait. "O":1, "C":2, "E":3, "A":4, "N":5
-        threshold: float, default=0.15
-            minimum absolute value for a term to be considered significant
-        max_dist: float, default=10
-            value to use as maximum distance for inverse distance calculation.
+            The personality trait: "O":1, "C":2, "E":3, "A":4, "N":5.
+        threshold: float, default: 0.15
+            The minimum absolute value for a term to be considered significant.
+        max_dist: float, default: 10
+            The value to use as maximum distance for inverse distance calculation.
 
         Returns
         -------
@@ -521,15 +561,15 @@ class Preprocessing:
         Parameters
         ----------
         i: int
-            index of the word according to the words_unknown dictionary
+            The index of the word according to the words_unknown dictionary.
         pred: float
-            score prediction of the model
+            The score prediction of the model.
         trait: int
-            personality trait. "O":1, "C":2, "E":3, "A":4, "N":5
-        threshold: float, default=0.15
-            minimum absolute value for a term to be considered significant
-        max_dist: float, default=10
-            value to use as maximum distance for inverse distance calculation.
+            The personality trait: "O":1, "C":2, "E":3, "A":4, "N":5.
+        threshold: float, default: 0.15
+            The minimum absolute value for a term to be considered significant.
+        max_dist: float, default: 10
+            The value to use as maximum distance for inverse distance calculation.
 
         Returns
         -------
@@ -548,9 +588,9 @@ class Preprocessing:
         Parameters
         ----------
         trait: int
-            personality trait. "O":1, "C":2, "E":3, "A":4, "N":5.
-        k: int, default=3
-            number of nearest neighbor of KNN algorithm.
+            The personality trait: "O":1, "C":2, "E":3, "A":4, "N":5.
+        k: int, default: 3
+            The number of nearest neighbor of KNN algorithm.
 
         Parameters
         ----------
@@ -563,7 +603,7 @@ class Preprocessing:
         Returns
         -------
         r2: float
-            r2 score of KNN's predictions
+            The r2 score of KNN's predictions.
 
         """
         self.tree_known = BallTree(self.train_inputs)
