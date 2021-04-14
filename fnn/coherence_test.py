@@ -6,7 +6,6 @@ import sys
 
 sys.path.insert(0, "../")
 
-print(config.max_neigs)
 config.epochs.sort()
 df_performance_coherence = pd.DataFrame(
     columns=[
