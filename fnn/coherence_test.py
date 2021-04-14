@@ -36,6 +36,7 @@ for distance in config.distances:
         distance=distance,
         embedding_name=config.embedding_name,
         k_folds=config.folds_number,
+        max_neigs=config.max_neigs
     )
 
     for fold in range(0, config.folds_number):
