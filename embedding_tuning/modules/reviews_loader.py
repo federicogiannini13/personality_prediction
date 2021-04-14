@@ -15,43 +15,7 @@ sys.path.insert(0, "../../")
 class ReviewsLoader:
     """
     Class that reads and preprocess Yelp reviews.
-
-    Attributes
-    ----------
-    dict_emb: dict
-        dict containing, for each term in the embedding, its index in the vocabulary.
-    dict_ocean: dict
-        dict containing, for each known term, its five personality traits' scores.
-    words: list
-        list containing in the i-th position the word with index i in the embedding vocabulary.
-    weights: numpy array
-        matrix containg, in the i-th position, the 100-dimensional embedding representation of the i-th term in embedding vocaboluary.
-    train_inputs: numpy array
-        numpy array containing the encoded reviews of the training set.
-    test_inputs: numpy array
-        numpy array containing the encoded reviews of the test set.
-    train_outputs: numpy array
-        numpy array with shape (5, train_size) containing reviews' scores of training set
-    test_outputs: numpy array
-        numpy array with shape (5, test_size) containing reviews' scores of test set
-    frequencies: dict
-        dict containing for each word of dict_emb its frequency in the selected reviews.
-
     """
-
-    file_reviews = file_reviews_cfg
-    reviews = []
-    reviews_enc = []
-    labels = []
-    weights = []
-    dict_ocean = {}
-    dict_emb = {}
-    num_reviews = 10 ** 3
-    frequencies = {}
-    voc_dim = 6 * (10 ** 4)
-    dtype = np.float32
-    reviews_size = 5996996
-    embedding_name = "new_tuned_embedding"
 
     def __init__(
         self,
@@ -100,7 +64,43 @@ class ReviewsLoader:
             'sum' if the target of a review, for each personality trait, is the sum of known terms' scores.
         embedding_name: str
             The name of the dir to be created that stores the tuned embedding.
+
+        Attributes
+        ----------
+        dict_emb: dict
+            dict containing, for each term in the embedding, its index in the vocabulary.
+        dict_ocean: dict
+            dict containing, for each known term, its five personality traits' scores.
+        words: list
+            list containing in the i-th position the word with index i in the embedding vocabulary.
+        weights: numpy array
+            matrix containg, in the i-th position, the 100-dimensional embedding representation of the i-th term in embedding vocaboluary.
+        train_inputs: numpy array
+            numpy array containing the encoded reviews of the training set.
+        test_inputs: numpy array
+            numpy array containing the encoded reviews of the test set.
+        train_outputs: numpy array
+            numpy array with shape (5, train_size) containing reviews' scores of training set
+        test_outputs: numpy array
+            numpy array with shape (5, test_size) containing reviews' scores of test set
+        frequencies: dict
+            dict containing for each word of dict_emb its frequency in the selected reviews.
         """
+        self.file_reviews = file_reviews_cfg
+        self.reviews = []
+        self.reviews_enc = []
+        self.labels = []
+        self.weights = []
+        self.dict_ocean = {}
+        self.dict_emb = {}
+        self.num_reviews = 10 ** 3
+        self.frequencies = {}
+        self.voc_dim = 6 * (10 ** 4)
+        self.dstype = np.float32
+        self.reviews_size = 5996996
+        self.embedding_name = "new_tuned_embedding"
+
+
         self.dict_emb = dict_emb
         self.dict_ocean = dict_ocean
         if weights is not None:
@@ -126,18 +126,18 @@ class ReviewsLoader:
         self.output_type = output_type
 
         self.text_preproc = text_preprocessing.TextPreProcessing()
-        self.load_reviews()
+        self._load_reviews()
 
-    def load_reviews(self):
-        self.read_reviews()
-        self.count_frequencies()
-        self.update_dict_emb()
-        self.encode_reviews()
-        self.standardize()
-        self.write_data()
+    def _load_reviews(self):
+        self._read_reviews()
+        self._count_frequencies()
+        self._update_dict_emb()
+        self._encode_reviews()
+        self._standardize()
+        self._write_data()
         print("______ PREPROCESSING COMPLETED")
 
-    def read_reviews(self):
+    def _read_reviews(self):
         """
         Read the yelp reviews from the json file.
         If self.shuffle=True shuffle reviews before reading them, else take the first self.num_reviews.
@@ -162,8 +162,8 @@ class ReviewsLoader:
                 rev = data["text"].lower()
                 if self.save_rev:
                     self.reviews_original.append(rev)
-                rev = self.clear_backspaces(rev)
-                rev = self.correct_words(rev)
+                rev = self._clear_backspaces(rev)
+                rev = self._correct_words(rev)
                 self.reviews.append(self.text_preproc.lemmatize(rev))
                 cont_load += 1
                 if cont_load % 50 == 0:
@@ -173,20 +173,20 @@ class ReviewsLoader:
             cont_line += 1
         print("_______ REVIEWS READ")
 
-    def count_reviews(self):
+    def _count_reviews(self):
         cont = 0
         for line in open(self.file_reviews, "r", encoding="utf8"):
             print(cont)
         with open(os.path.join(self.embedding_path, "reviews_size.pickle"), "wb") as f:
             pickle.dump(cont, f)
 
-    def clear_backspaces(self, rev):
+    def _clear_backspaces(self, rev):
         return rev.replace("\n", " ").replace("\t", " ")
 
-    def correct_words(self, rev):
+    def _correct_words(self, rev):
         return rev.replace("dont", "don't").replace("dont'", "don't")
 
-    def count_frequencies(self):
+    def _count_frequencies(self):
         """
         Count frequencies in reviews of the embedding dict's words.
         """
@@ -200,7 +200,7 @@ class ReviewsLoader:
                         self.frequencies[w] = 1
         print("_______ FREQUENCIES COUNTED")
 
-    def update_dict_emb(self):
+    def _update_dict_emb(self):
         """
         Take only the most voc_dim fequent words.
         Update dict_emb, pos and weights matrix.
@@ -229,7 +229,7 @@ class ReviewsLoader:
         self.weights = weights
         print("________ DICT EMB UPDATED")
 
-    def encode_reviews(self):
+    def _encode_reviews(self):
         """
         For each review:
         - Encode it using words' indexes in dict_emb (words not present in dict_emb are removed)
@@ -270,7 +270,7 @@ class ReviewsLoader:
             self.reviews = None
         print("_______ REVIEWS ENCODED")
 
-    def standardize(self):
+    def _standardize(self):
         if self.sep is not None:
             self.train_inputs = self.reviews_enc[: self.sep]
             self.test_inputs = self.reviews_enc[self.sep :]
@@ -289,7 +289,7 @@ class ReviewsLoader:
         self.train_outputs = np.transpose(self.train_outputs)
         self.test_outputs = np.transpose(self.test_outputs)
 
-    def write_data(self):
+    def _write_data(self):
         with open(os.path.join(self.embedding_path, "train_inputs.pickle"), "wb") as f:
             pickle.dump(self.train_inputs, f)
         with open(os.path.join(self.embedding_path, "train_outputs.pickle"), "wb") as f:

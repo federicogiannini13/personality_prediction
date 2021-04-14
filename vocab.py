@@ -5,31 +5,12 @@ from settings import file_known_terms as file_known_terms_cfg
 
 class VocabCreator:
     """
-    Class that creates embedding and known vocabularies.
-
-    Attributes
-    ----------
-    self.dict_known: dict
-        dict containing, for each known term, its five personality traits' scores.
-    self.dict_emb: dict
-        dict containing, for each term in the embedding, its index in the vocabulary.
-    self.words_emb: dict
-        dict containing for each index in the vocabulary the associated term in the embedding
-    self.weights: numpy array
-        matrix containg, in the i-th position, the 100-dimensional embedding representation of the i-th term in embedding vocaboluary.
+    Class that creates embedding and known vocabularies' objects.
     """
-
-    dict_known = {}
-    dict_emb = {}
-    words_emb = {}
-    file_known_terms = file_known_terms_cfg
-    file_glove = file_glove_cfg
-    delimiter = " "
-    weights = []
 
     def __init__(self, file_known_terms=None, file_glove=None, load_embedding=True):
         """
-        Init method that crate the vocabolaries.
+        Init method that creates the vocabularies.
 
         Parameters
         ----------
@@ -39,7 +20,27 @@ class VocabCreator:
             Path of glove.txt file
         load_embedding: bool
             True if you want to load the embedding. Use True if you are using original GloVe embedding. Use false if you are using tuned embedding
+
+        Attributes
+        ----------
+        self.dict_known: dict
+            dict containing, for each known term, its five personality traits' scores.
+        self.dict_emb: dict
+            dict containing, for each term in the embedding, its index in the vocabulary.
+        self.words_emb: dict
+            dict containing for each index in the vocabulary the associated term in the embedding
+        self.weights: numpy array
+            matrix containg, in the i-th position, the 100-dimensional embedding representation of the i-th term in embedding vocaboluary.
         """
+
+        self.dict_known = {}
+        self.dict_emb = {}
+        self.words_emb = {}
+        self.file_known_terms = file_known_terms_cfg
+        self.file_glove = file_glove_cfg
+        self.delimiter = " "
+        self.weights = []
+
         if file_known_terms is not None:
             self.file_known_terms = file_known_terms
         if file_glove is not None:

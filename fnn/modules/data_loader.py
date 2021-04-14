@@ -10,22 +10,23 @@ sys.path.insert(0, "../../")
 
 class Data_Loader:
     """
-    Class that stores preprocessing objects for different personality traits.
+    Class that creates preprocessing objects for different personality traits.
     """
 
     def __init__(
         self,
-        traits: list = [0, 1, 2, 3, 4],
-        distance: float = None,
-        embedding_name: str = "new_tuned_embedding",
-        k_folds: int = None,
-        train_prop_holdout: float = None,
-        standardize_holdout: bool = True,
-        shuffle: bool = True,
-        random_state: int = 42,
+        traits = [0, 1, 2, 3, 4],
+        distance = None,
+        max_neigs = None,
+        embedding_name = "new_tuned_embedding",
+        k_folds = None,
+        train_prop_holdout = None,
+        standardize_holdout = True,
+        shuffle = True,
+        random_state = 42,
     ):
         """
-        The init method that stores preprocessing objects for different personality traits.
+        The init method that creates preprocessing objects for different personality traits.
 
         Parameters
         ----------
@@ -33,6 +34,9 @@ class Data_Loader:
             OCEAN personality traits: O:0, C:1, E:2, A:3, N:4.
         distance: float
             In the case of coherence test, the distance to which perform the coherence test. Use None if you are not performing coherence test.
+        max_neigs: int
+            Maximum number of unknown neighbors to return in the case of distance>0.
+            Use None or 0 if you want to return all possible neighbors in the select distance.
         embedding_name: string
             The embedding to be used. There must be a directory containing the embedding in data folder.
         k_folds: int
@@ -46,7 +50,7 @@ class Data_Loader:
         random_state: int
             The seed of shuffling. Use None if you don't want the experiment to be repeatable.
 
-        Parameters
+        Attributes
         ----------
         self.data: list
             list of preprocessing objects. In the i-th position is stored the preprocessing object associated with the i-th trait of traits' list.
@@ -81,7 +85,7 @@ class Data_Loader:
                 )
                 data_.initialize_dict_unknown(create_tree=distance is not None)
                 if train_prop_holdout is not None:
-                    data_.search_unknown_neighbors(distance=distance)
+                    data_.search_unknown_neighbors(distance=distance, max_neigs=max_neigs)
                 self.data.append(data_)
 
         else:
@@ -99,4 +103,4 @@ class Data_Loader:
             self.data = [p] * len(traits)
             p.initialize_dict_unknown(create_tree=distance is not None)
             if train_prop_holdout is not None:
-                p.search_unknown_neighbors(distance=distance)
+                p.search_unknown_neighbors(distance=distance, max_neigs=max_neigs)

@@ -14,6 +14,9 @@ config.ocean_traits = [0, 1, 2, 3, 4]
 # OCEAN personality traits to which perform the coherence test: O:0, C:1, E:2, A:3, N:4.
 config.distances = [0, 4]
 # Distances to which perform the coherence test.
+config.max_neigs = 25000
+# Maximum number of unknown neighbors to return in the case of distance>0.
+# Use None or 0 if you want to return all possible neighbors in the select distance.
 config.batch_size = 32
 # Training batch size of fnn models.
 config.epochs = [50, 300]

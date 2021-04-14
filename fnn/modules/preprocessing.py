@@ -79,7 +79,7 @@ class Preprocessing:
         self.tree_known = None
         self.random_state = random_state
         self.shuffle = shuffle
-        self._initialize_dicts()
+        self._initialize_dicts_known()
 
         if k_folds is not None:
             self.kf = KFold(
@@ -99,7 +99,7 @@ class Preprocessing:
 
         print("____ PREPROCESSING DONE")
 
-    def _initialize_dicts(self):
+    def _initialize_dicts_known(self):
         self.embedding_known = []
         self.output = []
         self.words_known = []
@@ -267,7 +267,7 @@ class Preprocessing:
 
         Attributes
         -------
-        self.embedding_unknown: list
+        self.embedding_unknown: numpy.array
             The embedding representation of unknown terms. List of size len(unkwnon_terms), that contains in the i-th position the embedding_size representation of the i-th unkwnon term in the dict_unknown.
         self.words_unknown: list
             Ordered list of unknown terms.
@@ -276,7 +276,7 @@ class Preprocessing:
         """
         assert not self.words is None
         print("... Initializing the unknown terms' embedding")
-        self.embedding_unknown = self.global_embedding.copy()
+        self.embedding_unknown = list(self.global_embedding.copy())
         canc = []
         self.words_unknown = []
         self.dict_unknown = {}
@@ -291,6 +291,7 @@ class Preprocessing:
         for i in range(0, canc.shape[0]):
             self.embedding_unknown.pop(canc[i])
             canc = canc - 1
+        self.embedding_unknown = np.asarray(self.embedding_unknown)
         if create_tree:
             self.create_unknwon_tree()
 
@@ -306,7 +307,7 @@ class Preprocessing:
         print("... Creating the tree")
         self.unknown_tree = BallTree(self.embedding_unknown)
 
-    def search_unknown_neighbors(self, distance=0):
+    def search_unknown_neighbors(self, distance=0, max_neigs=None):
         """
         Search unknown neighbors of known terms.
 
@@ -317,6 +318,9 @@ class Preprocessing:
             - 0: return only the nearest neighbor of each known term of training set.
             - d>0: return only unknown terms whose distance from any known terms in training set is maximum d.
             - None: return all unknown terms.
+        max_neigs: int
+            Maximum number of nieghbors to return in the case of distance>0.
+            Use None or 0 if you want to return all possible neighbors in the select distance.
 
         Attributes
         -------
@@ -344,19 +348,31 @@ class Preprocessing:
                 self.train_inputs[0 : self.train_len], r=distance, return_distance=True
             )
             print("Creating neighbors list...")
-            neig_list = []
-            for n in self.neighbors_query[0]:
-                neig_list = neig_list + n.tolist()
-            a = []
+            unknown_neigs_distances_dict = {}
+            unknown_neigs = []
             for i in range(0, len(self.neighbors_query[1])):
-                for j in range(0, len(self.neighbors_query[1][i])):
-                    a.append(self.neighbors_query[1][i][j])
-            self.max_distance = np.max(a)
-            self.unknown_neig_list = list(dict.fromkeys(neig_list))  # remove duplicates
-            print("Adding centers...")
+                for j in range(0, len(self.neighbors_query[0][i])):
+                    n = self.neighbors_query[0][i][j]
+                    if n not in unknown_neigs_distances_dict:
+                        unknown_neigs.append(n)
+                        unknown_neigs_distances_dict[n] = self.neighbors_query[1][i][j]
+                    else:
+                        unknown_neigs_distances_dict[n] = min(self.neighbors_query[1][i][j], unknown_neigs_distances_dict[n])
+            unknown_neigs_distances = np.asarray([unknown_neigs_distances_dict[n] for n in unknown_neigs])
+            unknown_neigs = np.asarray(unknown_neigs)
+            if max_neigs is not None and max_neigs>0:
+                sort_idx = np.argsort(unknown_neigs_distances)
+                unknown_neigs = np.take(unknown_neigs, sort_idx)
+                unknown_neigs_distances = np.take(unknown_neigs_distances, sort_idx)
+                unknown_neigs = unknown_neigs[0:max_neigs]
+                unknown_neigs_distances = unknown_neigs_distances[0:max_neigs]
+            self.max_distance = np.max(unknown_neigs_distances)
+            self.max_distance_neig = np.take(unknown_neigs, np.argmax(unknown_neigs_distances))
+            self.unknown_neigs = unknown_neigs
+            self.unknown_neigs_distances = unknown_neigs_distances
             self.inputs_neig = []
             self.words_neig = []
-            for n in self.unknown_neig_list:
+            for n in unknown_neigs:
                 self.inputs_neig.append(self.embedding_unknown[n])
                 self.words_neig = self.words_unknown[n]
             self.inputs_neig = np.asarray(self.inputs_neig)
@@ -367,11 +383,11 @@ class Preprocessing:
         self.neig_of_neig = {}
         self.neighbors = {}
 
-        print("Finding centers...")
+        print("Finding neighbors...")
         for i in range(0, self.train_len):
             self._search_unknown_neighbor(i)
 
-        print("Adding centers...")
+        print("Adding neighbors...")
         self.inputs_neig = []
         self.words_neig = []
         for i in range(0, self.train_len):

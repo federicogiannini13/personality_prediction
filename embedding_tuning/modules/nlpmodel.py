@@ -68,7 +68,7 @@ class NLPModel:
         voc_dim: int
             In the case of embedding's learning from scratch, this parameter represents the vocabolary size.
         features_number: int
-            In the case of embedding's learning from scratch, this parameter represents the embedding' features number
+            In the case of embedding's learning from scratch, this parameter represents the embedding's features number
         window_size: int
             The windows dimension of convolution.
         filters_number: int
@@ -81,6 +81,25 @@ class NLPModel:
             Max length of a sentence. If none is set to the length of the longest sentence in training set + 20.
         train_zeros: bool
             True if you want to train the representation of padding token (tokens added to pad each review in such a way that all the reviews have the same lenght).
+
+        Parameters
+        ----------
+        self.model: tensorflow.keras.models.Sequential
+            The model to be trained
+        self.train_inputs: numpy array
+            The numpy array containing the encoded reviews of training set.
+        self.train_outputs: numpy array
+            The numpy array with len train_size, containing the reviews target.
+        self.embedding_layer: tensorflow.keras.layers.Embedding
+            The model's embedding layer.
+        self.conv_layer: tensorflow.keras.layers.Conv2D
+            The model's convolutional layer.
+        self.pool_layer: tensorflow.keras.layers.MaxPooling2D
+            The model's max pool layer.
+        self.hidden_layer: tensorflow.keras.layers.Dense
+            The model's hidden layer before output layer.
+        self.output_layer: tensorflow.keras.layers.Dense
+            The model's output layer.
         """
 
         if voc_dim is not None:
@@ -301,6 +320,8 @@ class NLPModel:
     def fit_predict(self, test_inputs, test_outputs, root_path=None, epochs_number=10):
         """
         Fit the model on the training set and, at the end of each epoch, evaluate R2 and MSE metrics on test set.
+        Store performances and model's weights in the specific path.
+
         Parameters
         ----------
         test_inputs: numpy array
@@ -312,8 +333,16 @@ class NLPModel:
         epochs_number: int
             train epochs' number.
 
-        Returns
+        Parameters
         -------
+        self.predictions: list
+            List containing model's predictions on test set after each epochs.
+        self.r2: list
+            List containing model's predictions' estimated R2 on test set after each training epochs.
+        self.mse: list
+            List containing model's predictions' estimated MSE on test set after each training epochs.
+        self.weights: list
+            List containing model's weights after each training epochs.
 
         """
         if root_path is not None:
