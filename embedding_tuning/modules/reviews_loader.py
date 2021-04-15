@@ -1,4 +1,5 @@
 import os
+
 while not os.getcwd().endswith("personality_prediction"):
     os.chdir(os.path.dirname(os.getcwd()))
 from utils import create_dir
@@ -10,9 +11,6 @@ import os
 from settings import ROOT_DIR
 import json
 import numpy as np
-import sys
-
-sys.path.insert(0, "../../")
 
 
 class ReviewsLoader:

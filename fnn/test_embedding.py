@@ -1,4 +1,5 @@
 import os
+
 while not os.getcwd().endswith("personality_prediction"):
     os.chdir(os.path.dirname(os.getcwd()))
 from fnn.modules import data_loader
@@ -6,11 +7,9 @@ import pandas as pd
 from fnn.config.test_embedding_config import config
 from settings import ROOT_DIR
 from utils import create_dir
-import sys
-
-sys.path.insert(0, "../")
 
 df_performance = pd.DataFrame(columns=["trait", "r2"])
+base_root = os.path.join(config.OUTPUTS_DIR, "outputs", config.embedding_name)
 
 if config.embedding_dict_to_use is not None:
     import pickle
@@ -19,12 +18,12 @@ if config.embedding_dict_to_use is not None:
     with open(os.path.join(embedding_path, "words.pickle"), "rb") as f:
         words_to_select = pickle.load(f)
     embedding_dict_str = config.embedding_dict_to_use + "_dict"
-    base_root = os.path.join(config.OUTPUTS_DIR, "outputs", config.embedding_name, embedding_dict_str, "KNN")
+    base_root = os.path.join(base_root, embedding_dict_str)
     embedding_dict_str = "_" + embedding_dict_str
 else:
     words_to_select = None
-    base_root = os.path.join(config.OUTPUTS_DIR, "outputs", config.embedding_name, "KNN")
     embedding_dict_str = ""
+base_root = os.path.join(base_root, "KNN")
 create_dir(base_root)
 
 dl = data_loader.Data_Loader(

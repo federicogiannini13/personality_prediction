@@ -1,4 +1,5 @@
 import os
+
 while not os.getcwd().endswith("personality_prediction"):
     os.chdir(os.path.dirname(os.getcwd()))
 from fnn.config.coherence_test_config import config
@@ -22,6 +23,8 @@ if config.test1:
         columns=["trait", "fold", "best_epoch", "mse", "r2"]
     )
 
+base_root = os.path.join(config.OUTPUTS_DIR, "outputs", config.embedding_name)
+
 if config.embedding_dict_to_use is not None:
     import pickle
 
@@ -29,29 +32,26 @@ if config.embedding_dict_to_use is not None:
     with open(os.path.join(embedding_path, "words.pickle"), "rb") as f:
         words_to_select = pickle.load(f)
     embedding_dict_str = config.embedding_dict_to_use + "_dict"
-    base_root = os.path.join(
-        config.OUTPUTS_DIR,
-        "outputs",
-        config.embedding_name,
-        embedding_dict_str,
-        "coherence_test",
-        str(config.folds_number) + "_folds",
-    )
+    base_root = os.path.join(base_root, embedding_dict_str)
     embedding_dict_str = "_" + embedding_dict_str
 else:
     words_to_select = None
     embedding_dict_str = ""
-    base_root = os.path.join(
-        config.OUTPUTS_DIR,
-        "outputs",
-        config.embedding_name,
-        embedding_dict_str,
-        "coherence_test",
-        str(config.folds_number) + "_folds",
-    )
+base_root = os.path.join(base_root, "coherence_test")
 
 for distance in config.distances:
-    root = os.path.join(base_root, str(distance) + "_dist")
+    root = os.path.join(
+        base_root, str(distance) + "_dist", str(config.folds_number) + "_folds"
+    )
+    file_suffix = (
+        "_"
+        + str(config.folds_number)
+        + "folds_"
+        + str(distance)
+        + "dist_"
+        + config.embedding_name
+        + embedding_dict_str
+    )
     dl = data_loader.Data_Loader(
         traits=config.ocean_traits,
         distance=distance,
@@ -103,14 +103,7 @@ for distance in config.distances:
                 df_performance_kfolds.to_excel(
                     os.path.join(
                         base_root,
-                        "performances_kfolds"
-                        + str(config.folds_number)
-                        + "folds_"
-                        + str(distance)
-                        + "dist_"
-                        + config.embedding_name
-                        + embedding_dict_str
-                        + ".xlsx",
+                        "performances_kfolds" + file_suffix + ".xlsx",
                     ),
                     index=False,
                 )
@@ -133,14 +126,7 @@ for distance in config.distances:
             df_performance_coherence.to_excel(
                 os.path.join(
                     root,
-                    "performances_coherence"
-                    + str(config.folds_number)
-                    + "folds_"
-                    + str(distance)
-                    + "dist_"
-                    + config.embedding_name
-                    + embedding_dict_str
-                    + ".xlsx",
+                    "performances_coherence" + file_suffix + ".xlsx",
                 ),
                 index=False,
             )
@@ -176,14 +162,7 @@ for distance in config.distances:
                 df_performance_coherence.to_excel(
                     os.path.join(
                         root,
-                        "performances_coherence"
-                        + str(config.folds_number)
-                        + "folds_"
-                        + str(distance)
-                        + "dist_"
-                        + config.embedding_name
-                        + embedding_dict_str
-                        + ".xlsx",
+                        "performances_coherence" + file_suffix + ".xlsx",
                     ),
                     index=False,
                 )
@@ -194,14 +173,7 @@ for distance in config.distances:
     ).reset_index().groupby("trait").mean().reset_index().drop(columns="fold").to_excel(
         os.path.join(
             root,
-            "final_performances_coherence_"
-            + str(config.folds_number)
-            + "folds_"
-            + str(distance)
-            + "dist_"
-            + config.embedding_name
-            + embedding_dict_str
-            + ".xlsx",
+            "final_performances_coherence" + file_suffix + ".xlsx",
         ),
         index=False,
     )
@@ -212,14 +184,7 @@ for distance in config.distances:
         ).to_excel(
             os.path.join(
                 root,
-                "final_performances_coherence_"
-                + str(config.folds_number)
-                + "folds_"
-                + str(distance)
-                + "dist_"
-                + config.embedding_name
-                + embedding_dict_str
-                + ".xlsx",
+                "final_performances_coherence" + file_suffix + ".xlsx",
             ),
             index=False,
         )

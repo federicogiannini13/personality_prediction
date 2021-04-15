@@ -1,4 +1,5 @@
 import os
+
 while not os.getcwd().endswith("personality_prediction"):
     os.chdir(os.path.dirname(os.getcwd()))
 import tensorflow as tf
@@ -18,9 +19,6 @@ import sklearn
 import sklearn.metrics
 import pickle
 import os
-import sys
-
-sys.path.insert(0, "../../")
 from utils import create_dir
 
 

@@ -1,10 +1,10 @@
 # ______
 # IMPORT:
 import os
-import sys
-from utils import load_yaml_config, Config
 
-sys.path.insert(0, "../../")
+while not os.getcwd().endswith("personality_prediction"):
+    os.chdir(os.path.dirname(os.getcwd()))
+from utils import load_yaml_config, Config
 
 # ______
 # CONFIG:

@@ -1,24 +1,15 @@
 import os
+
 while not os.getcwd().endswith("personality_prediction"):
     os.chdir(os.path.dirname(os.getcwd()))
 from fnn.config.kfcv_test_config import config
 from fnn.modules import data_loader, fnn_model
 import pandas as pd
 import numpy as np
-import sys
-
 from settings import ROOT_DIR
 
-sys.path.insert(0, "../")
-
 df_performance = pd.DataFrame(columns=["trait", "fold", "best_epoch", "mse", "r2"])
-base_root = os.path.join(
-    config.OUTPUTS_DIR,
-    "outputs",
-    config.embedding_name,
-    "KFCV",
-    str(config.folds_number) + "_folds",
-)
+base_root = os.path.join(config.OUTPUTS_DIR, "outputs", config.embedding_name)
 
 if config.embedding_dict_to_use is not None:
     import pickle
@@ -27,26 +18,16 @@ if config.embedding_dict_to_use is not None:
     with open(os.path.join(embedding_path, "words.pickle"), "rb") as f:
         words_to_select = pickle.load(f)
     embedding_dict_str = config.embedding_dict_to_use + "_dict"
-    base_root = os.path.join(
-        config.OUTPUTS_DIR,
-        "outputs",
-        config.embedding_name,
-        embedding_dict_str,
-        "KFCV",
-        str(config.folds_number) + "_folds",
-    )
+    base_root = os.path.join(base_root, embedding_dict_str)
     embedding_dict_str = "_" + embedding_dict_str
 else:
     words_to_select = None
     embedding_dict_str = ""
-    base_root = os.path.join(
-        config.OUTPUTS_DIR,
-        "outputs",
-        config.embedding_name,
-        embedding_dict_str,
-        "coherence_test",
-        str(config.folds_number) + "_folds",
-    )
+base_root = os.path.join(
+    base_root,
+    "KFCV",
+    str(config.folds_number) + "_folds",
+)
 
 dl = data_loader.Data_Loader(
     traits=config.ocean_traits,
@@ -58,6 +39,10 @@ dl = data_loader.Data_Loader(
 models = []
 for i in range(0, len(config.ocean_traits)):
     models.append([fnn_model.FNNModel() for i in range(0, config.folds_number)])
+
+file_suffix = (
+    "_" + str(config.folds_number) + "fcv_" + config.embedding_name + embedding_dict_str
+)
 
 for fold in range(0, config.folds_number):
     for cont_tr, trait in enumerate(config.ocean_traits):
@@ -92,12 +77,7 @@ for fold in range(0, config.folds_number):
         df_performance.to_excel(
             os.path.join(
                 base_root,
-                "performances"
-                + str(config.folds_number)
-                + "fcv_"
-                + config.embedding_name
-                + embedding_dict_str
-                + ".xlsx",
+                "performances" + file_suffix + ".xlsx",
             ),
             index=False,
         )
@@ -105,12 +85,7 @@ for fold in range(0, config.folds_number):
 df_performance.groupby("trait").mean().reset_index().drop(columns="fold").to_excel(
     os.path.join(
         base_root,
-        "final_performances_"
-        + str(config.folds_number)
-        + "fcv_"
-        + config.embedding_name
-        + embedding_dict_str
-        + ".xlsx",
+        "final_performances" + file_suffix + ".xlsx",
     ),
     index=False,
 )

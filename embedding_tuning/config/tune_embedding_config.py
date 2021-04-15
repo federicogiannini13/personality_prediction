@@ -1,5 +1,8 @@
 import os
 
+while not os.getcwd().endswith("personality_prediction"):
+    os.chdir(os.path.dirname(os.getcwd()))
+
 from utils import Config, load_yaml_config
 
 config = Config()

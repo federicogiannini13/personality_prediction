@@ -13,6 +13,7 @@ def create_dir_file(path):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
+
 def load_yaml_config(config, path):
     if os.path.exists(path):
         with open(path) as f:
@@ -26,5 +27,6 @@ def load_yaml_config(config, path):
             config.OUTPUTS_DIR = ROOT_DIR
     return config
 
-class Config():
+
+class Config:
     pass

@@ -1,4 +1,5 @@
 import os
+
 while not os.getcwd().endswith("personality_prediction"):
     os.chdir(os.path.dirname(os.getcwd()))
 from embedding_tuning.modules.reviews_loader import read_reviews_loaded
