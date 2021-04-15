@@ -1,3 +1,6 @@
+import os
+while not os.getcwd().endswith("personality_prediction"):
+    os.chdir(os.path.dirname(os.getcwd()))
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import (

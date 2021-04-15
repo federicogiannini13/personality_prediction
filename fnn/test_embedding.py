@@ -1,4 +1,6 @@
 import os
+while not os.getcwd().endswith("personality_prediction"):
+    os.chdir(os.path.dirname(os.getcwd()))
 from fnn.modules import data_loader
 import pandas as pd
 from fnn.config.test_embedding_config import config

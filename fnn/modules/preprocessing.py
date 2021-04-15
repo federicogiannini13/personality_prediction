@@ -1,12 +1,12 @@
+import os
+while not os.getcwd().endswith("personality_prediction"):
+    os.chdir(os.path.dirname(os.getcwd()))
 import numpy as np
 import sklearn
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import BallTree
 from sklearn.model_selection import KFold
 import random
-import sys
-
-sys.path.insert(0, "../../")
 
 
 class Preprocessing:

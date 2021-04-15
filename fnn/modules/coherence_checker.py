@@ -1,11 +1,10 @@
+import os
+while not os.getcwd().endswith("personality_prediction"):
+    os.chdir(os.path.dirname(os.getcwd()))
 from fnn.modules import fnn_model
 import numpy as np
 import pickle
-import os
 from utils import create_dir
-import sys
-
-sys.path.insert(0, "../../")
 
 
 class CoherenceChecker:

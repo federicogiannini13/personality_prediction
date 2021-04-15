@@ -1,9 +1,9 @@
+import os
+while not os.getcwd().endswith("personality_prediction"):
+    os.chdir(os.path.dirname(os.getcwd()))
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-import sys
-
-sys.path.insert(0, "../../")
 
 
 class TextPreProcessing:

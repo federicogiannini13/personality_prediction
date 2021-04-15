@@ -1,12 +1,10 @@
 import os
+while not os.getcwd().endswith("personality_prediction"):
+    os.chdir(os.path.dirname(os.getcwd()))
 from fnn.config.coherence_test_config import config
 from fnn.modules import data_loader, coherence_checker
 import pandas as pd
-import sys
-import vocab
 from settings import ROOT_DIR
-
-sys.path.insert(0, "../")
 
 config.epochs.sort()
 df_performance_coherence = pd.DataFrame(
