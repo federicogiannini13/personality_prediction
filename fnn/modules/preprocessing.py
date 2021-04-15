@@ -112,21 +112,16 @@ class Preprocessing:
         embedding = []
         dict_emb = {}
         cont = 0
-        print("Words to select: ", len(words_to_select))
         for w in self.words:
             if w in words_to_select:
                 dict_emb[w] = cont
                 words.append(w)
                 embedding.append(self.global_embedding[self.dict_emb[w]])
                 cont += 1
-        print("Words selected: ", len(words))
-        print("Embedding selected: ", len(embedding))
         words_known = list(self.dict_known_scores.keys())
-        print("Initial Words known: ", len(words_known))
         for w in words_known:
             if w not in words_to_select:
                 del self.dict_known_scores[w]
-        print("Final words known", len(self.dict_known_scores[w]))
         self.words = words
         self.global_embedding = embedding
         self.dict_emb = dict_emb

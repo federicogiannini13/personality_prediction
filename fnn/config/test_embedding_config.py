@@ -11,7 +11,7 @@ sys.path.insert(0, "../../")
 config = Config()
 config.k = 5
 # number of nearest neighbor of KNN algorithm.
-config.embedding_name = "glove"
+config.embedding_name = "tuned_embedding"
 # the embedding to be used. There must be a directory containing the embedding in data folder.
 config.ocean_traits = [0, 1, 2, 3, 4]
 # OCEAN personality traits to which perform the coherence test: O:0, C:1, E:2, A:3, N:4

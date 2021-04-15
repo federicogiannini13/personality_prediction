@@ -102,7 +102,18 @@ for distance in config.distances:
                     ignore_index=True,
                 )
                 df_performance_kfolds.to_excel(
-                    os.path.join(base_root, "performances_kfolds.xlsx"), index=False
+                    os.path.join(
+                        base_root,
+                        "performances_kfolds"
+                        + str(config.folds_number)
+                        + "folds_"
+                        + str(distance)
+                        + "dist_"
+                        + config.embedding_name
+                        + embedding_dict_str
+                        + ".xlsx",
+                    ),
+                    index=False,
                 )
             checker.train2_coherence(
                 epochs=config.epochs_train2,
@@ -121,7 +132,18 @@ for distance in config.distances:
                 ignore_index=True,
             )
             df_performance_coherence.to_excel(
-                os.path.join(root, "performances_coherence.xlsx"), index=False
+                os.path.join(
+                    root,
+                    "performances_coherence"
+                    + str(config.folds_number)
+                    + "folds_"
+                    + str(distance)
+                    + "dist_"
+                    + config.embedding_name
+                    + embedding_dict_str
+                    + ".xlsx",
+                ),
+                index=False,
             )
 
             e = config.epochs[0]
@@ -153,7 +175,18 @@ for distance in config.distances:
                     ignore_index=True,
                 )
                 df_performance_coherence.to_excel(
-                    os.path.join(root, "performances_coherence.xlsx"), index=False
+                    os.path.join(
+                        root,
+                        "performances_coherence"
+                        + str(config.folds_number)
+                        + "folds_"
+                        + str(distance)
+                        + "dist_"
+                        + config.embedding_name
+                        + embedding_dict_str
+                        + ".xlsx",
+                    ),
+                    index=False,
                 )
                 e += config.epochs_interval
 

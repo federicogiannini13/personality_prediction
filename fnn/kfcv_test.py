@@ -5,6 +5,8 @@ import pandas as pd
 import numpy as np
 import sys
 
+from settings import ROOT_DIR
+
 sys.path.insert(0, "../")
 
 df_performance = pd.DataFrame(columns=["trait", "fold", "best_epoch", "mse", "r2"])
@@ -16,10 +18,38 @@ base_root = os.path.join(
     str(config.folds_number) + "_folds",
 )
 
+if config.embedding_dict_to_use is not None:
+    import pickle
+
+    embedding_path = os.path.join(ROOT_DIR, "data", config.embedding_dict_to_use)
+    with open(os.path.join(embedding_path, "words.pickle"), "rb") as f:
+        words_to_select = pickle.load(f)
+    embedding_dict_str = config.embedding_dict_to_use + "_dict"
+    base_root = os.path.join(
+        config.OUTPUTS_DIR,
+        "outputs",
+        config.embedding_name,
+        embedding_dict_str,
+        "KFCV",
+        str(config.folds_number) + "_folds",
+    )
+else:
+    words_to_select = None
+    embedding_dict_str = ""
+    base_root = os.path.join(
+        config.OUTPUTS_DIR,
+        "outputs",
+        config.embedding_name,
+        embedding_dict_str,
+        "coherence_test",
+        str(config.folds_number) + "_folds",
+    )
+
 dl = data_loader.Data_Loader(
     traits=config.ocean_traits,
     embedding_name=config.embedding_name,
     k_folds=config.folds_number,
+    words_to_select=words_to_select,
 )
 
 models = []
@@ -57,7 +87,16 @@ for fold in range(0, config.folds_number):
             ignore_index=True,
         )
         df_performance.to_excel(
-            os.path.join(base_root, "performances.xlsx"), index=False
+            os.path.join(
+                base_root,
+                "performances"
+                + str(config.folds_number)
+                + "fcv_"
+                + config.embedding_name
+                + embedding_dict_str
+                + ".xlsx",
+            ),
+            index=False,
         )
 
 df_performance.groupby("trait").mean().reset_index().drop(columns="fold").to_excel(
@@ -67,6 +106,7 @@ df_performance.groupby("trait").mean().reset_index().drop(columns="fold").to_exc
         + str(config.folds_number)
         + "fcv_"
         + config.embedding_name
+        + embedding_dict_str
         + ".xlsx",
     ),
     index=False,
