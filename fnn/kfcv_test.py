@@ -33,6 +33,7 @@ if config.embedding_dict_to_use is not None:
         "KFCV",
         str(config.folds_number) + "_folds",
     )
+    embedding_dict_str = "_" + embedding_dict_str
 else:
     words_to_select = None
     embedding_dict_str = ""

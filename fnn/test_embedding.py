@@ -9,8 +9,6 @@ import sys
 sys.path.insert(0, "../")
 
 df_performance = pd.DataFrame(columns=["trait", "r2"])
-base_root = os.path.join(config.OUTPUTS_DIR, "outputs", config.embedding_name, "KNN")
-create_dir(base_root)
 
 if config.embedding_dict_to_use is not None:
     import pickle
@@ -18,10 +16,14 @@ if config.embedding_dict_to_use is not None:
     embedding_path = os.path.join(ROOT_DIR, "data", config.embedding_dict_to_use)
     with open(os.path.join(embedding_path, "words.pickle"), "rb") as f:
         words_to_select = pickle.load(f)
-    embedding_dict_str = "_" + config.embedding_dict_to_use + "_dict"
+    embedding_dict_str = config.embedding_dict_to_use + "_dict"
+    base_root = os.path.join(config.OUTPUTS_DIR, "outputs", config.embedding_name, embedding_dict_str, "KNN")
+    embedding_dict_str = "_" + embedding_dict_str
 else:
     words_to_select = None
+    base_root = os.path.join(config.OUTPUTS_DIR, "outputs", config.embedding_name, "KNN")
     embedding_dict_str = ""
+create_dir(base_root)
 
 dl = data_loader.Data_Loader(
     traits=config.ocean_traits,
