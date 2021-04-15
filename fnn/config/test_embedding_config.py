@@ -17,6 +17,9 @@ config.ocean_traits = [0, 1, 2, 3, 4]
 # OCEAN personality traits to which perform the coherence test: O:0, C:1, E:2, A:3, N:4
 config.OUTPUTS_DIR = None
 # The base path in which tests' outputs will be saved. Set as None if you want to store them in project's dir.
+config.embedding_dict_to_use = None
+# If you want to use the dictionary of another embedding, set this parameter with the embedding name. Use None otherwise.
+# There must be a directory containing the embedding in data folder.
 
 config = load_yaml_config(
     config,

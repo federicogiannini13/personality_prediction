@@ -2,6 +2,7 @@ import os
 from fnn.modules import data_loader
 import pandas as pd
 from fnn.config.test_embedding_config import config
+from settings import ROOT_DIR
 from utils import create_dir
 import sys
 
@@ -11,12 +12,24 @@ df_performance = pd.DataFrame(columns=["trait", "r2"])
 base_root = os.path.join(config.OUTPUTS_DIR, "outputs", config.embedding_name, "KNN")
 create_dir(base_root)
 
+if config.embedding_dict_to_use is not None:
+    import pickle
+
+    embedding_path = os.path.join(ROOT_DIR, "data", config.embedding_dict_to_use)
+    with open(os.path.join(embedding_path, "words.pickle"), "rb") as f:
+        words_to_select = pickle.load(f)
+    embedding_dict_str = "_" + config.embedding_dict_to_use + "_dict"
+else:
+    words_to_select = None
+    embedding_dict_str = ""
+
 dl = data_loader.Data_Loader(
     traits=config.ocean_traits,
     train_prop_holdout=1,
     embedding_name=config.embedding_name,
     standardize_holdout=False,
     shuffle=False,
+    words_to_select=words_to_select,
 )
 
 for cont_tr, trait in enumerate(config.ocean_traits):
@@ -29,7 +42,12 @@ for cont_tr, trait in enumerate(config.ocean_traits):
     df_performance.to_excel(
         os.path.join(
             base_root,
-            "performances_" + str(config.k) + "nn_" + config.embedding_name + ".xlsx",
+            "performances_"
+            + str(config.k)
+            + "nn_"
+            + config.embedding_name
+            + embedding_dict_str
+            + ".xlsx",
         ),
         index=False,
     )
