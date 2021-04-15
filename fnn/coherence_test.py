@@ -45,10 +45,10 @@ for distance in config.distances:
     )
     file_suffix = (
         "_"
-        + str(config.folds_number)
-        + "folds_"
         + str(distance)
         + "dist_"
+        + str(config.folds_number)
+        + "folds_"
         + config.embedding_name
         + embedding_dict_str
     )
