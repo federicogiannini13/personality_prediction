@@ -1,7 +1,3 @@
-import os
-
-while not os.getcwd().endswith("personality_prediction"):
-    os.chdir(os.path.dirname(os.getcwd()))
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import (
     Dense,

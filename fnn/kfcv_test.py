@@ -1,9 +1,11 @@
 import os
-
-while not os.getcwd().endswith("personality_prediction"):
-    os.chdir(os.path.dirname(os.getcwd()))
 import sys
+while not os.getcwd().endswith("personality_prediction") or os.getcwd()!="/":
+    os.chdir(os.path.dirname(os.getcwd()))
+if os.getcwd()=="/":
+    raise Exception("The project dir's name must be 'personality_prediction'. Rename it.")
 sys.path.append(os.getcwd())
+
 from fnn.config.kfcv_test_config import config
 from fnn.modules import data_loader, fnn_model
 import pandas as pd

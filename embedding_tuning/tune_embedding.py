@@ -1,7 +1,11 @@
 import os
-
-while not os.getcwd().endswith("personality_prediction"):
+import sys
+while not os.getcwd().endswith("personality_prediction") or os.getcwd()!="/":
     os.chdir(os.path.dirname(os.getcwd()))
+if os.getcwd()=="/":
+    raise Exception("The project dir's name must be 'personality_prediction'. Rename it.")
+sys.path.append(os.getcwd())
+
 from embedding_tuning.modules.reviews_loader import read_reviews_loaded
 import vocab
 from embedding_tuning.modules import nlpmodel, reviews_loader

@@ -1,7 +1,3 @@
-import os
-
-while not os.getcwd().endswith("personality_prediction"):
-    os.chdir(os.path.dirname(os.getcwd()))
 import vocab
 from fnn.modules import preprocessing
 import pickle

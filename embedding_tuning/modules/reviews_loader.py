@@ -1,7 +1,3 @@
-import os
-
-while not os.getcwd().endswith("personality_prediction"):
-    os.chdir(os.path.dirname(os.getcwd()))
 from utils import create_dir
 from embedding_tuning.modules import text_preprocessing
 from sklearn.preprocessing import StandardScaler

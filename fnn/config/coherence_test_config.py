@@ -1,10 +1,14 @@
+import os
+import sys
+while not os.getcwd().endswith("personality_prediction") or os.getcwd()!="/":
+    os.chdir(os.path.dirname(os.getcwd()))
+if os.getcwd()=="/":
+    raise Exception("The project dir's name must be 'personality_prediction'. Rename it.")
+sys.path.append(os.getcwd())
+
 # ______
 # IMPORT:
 from utils import load_yaml_config, Config
-import os
-
-while not os.getcwd().endswith("personality_prediction"):
-    os.chdir(os.path.dirname(os.getcwd()))
 
 # ______
 # CONFIG:

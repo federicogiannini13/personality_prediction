@@ -1,7 +1,11 @@
 import os
-
-while not os.getcwd().endswith("personality_prediction"):
+import sys
+while not os.getcwd().endswith("personality_prediction") or os.getcwd()!="/":
     os.chdir(os.path.dirname(os.getcwd()))
+if os.getcwd()=="/":
+    raise Exception("The project dir's name must be 'personality_prediction'. Rename it.")
+sys.path.append(os.getcwd())
+
 from fnn.modules import data_loader
 import pandas as pd
 from fnn.config.test_embedding_config import config
