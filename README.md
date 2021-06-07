@@ -2,9 +2,10 @@
 This repository contains the code used for the experimentation shown in the paper.
 
 ### Installation
-1) execute `pip install -r requirements.txt` .
-2) execute `python -m embedding_tuning.nltk_init` .
-3) Download the file from Google Drive and unzip it to the project dir.
+1) Download the file from Google Drive and unzip it to the project dir.
+2) Download `yelp_academic_dataset_review.json` from https://www.yelp.com/dataset/download and put it in the `data/yelp_dataset` folder.
+3) execute `pip install -r requirements.txt` .
+4) execute `python -m embedding_tuning.nltk_init` .
 
 ### Project structure
 The project is composed by the following directories.
