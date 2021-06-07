@@ -22,5 +22,5 @@ Module that trains fnn models and performs performance tests (coherence, kfcv an
 * **test_embedding.py**: performs the KNN test on the specified embedding. Performances are stored in `outputs/(embedding)/KNN/(k)nn_performances.xlsx` where embedding is the specified embedding and k is the specified number of nearest neighbors.
 
 ### Running configuration
-Each module has its own `config` subfloder that contains a file, whose name ends with `_config.py`, for each of the specified files in the Project structure paragraph.
+Each module has its own `config` subfolder that contains a file, whose name ends with `_config.py`, for each of the specified files in the Project structure paragraph.
 To specify, for the first time, the running configuration of a specific py file, run the associated `_config.py` file. A yaml file with the same name will be created. Edit the yaml file with the desired running configuration and run the py file. The meaning of each parameter is specified in `_config.py`'s comments.
