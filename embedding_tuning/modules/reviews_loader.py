@@ -136,8 +136,9 @@ class ReviewsLoader:
         cont_line = 0
         cont_load = 0
         self.reviews_original = []
+        reviews_to_load = 0
         if self.shuffle:
-            reviews_to_load = np.asarray(list(range(0, self.reviews_size)))
+            reviews_to_load = np.asarray(list(range(0, self.num_reviews)))
             np.random.shuffle(reviews_to_load)
             reviews_to_load = reviews_to_load[0 : self.num_reviews]
             reviews_to_load = np.sort(reviews_to_load)

@@ -1,6 +1,6 @@
 import os
 import sys
-while not os.getcwd().endswith("personality_prediction") or os.getcwd()!="/":
+while not os.getcwd().endswith("personality_prediction") and os.getcwd()!="/":
     os.chdir(os.path.dirname(os.getcwd()))
 if os.getcwd()=="/":
     raise Exception("The project dir's name must be 'personality_prediction'. Rename it.")

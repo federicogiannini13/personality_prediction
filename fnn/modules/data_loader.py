@@ -2,6 +2,7 @@ import vocab
 from fnn.modules import preprocessing
 import pickle
 from settings import ROOT_DIR
+import os
 
 
 class Data_Loader:
