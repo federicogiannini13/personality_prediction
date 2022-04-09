@@ -157,7 +157,7 @@ class ReviewsLoader:
                 self.reviews.append(self.text_preproc.lemmatize(rev))
                 cont_load += 1
                 if cont_load % 50 == 0:
-                    print(cont_load, "/", self.num_reviews, " loaded")
+                    print(cont_load, "/", self.num_reviews, " loaded", end="\r")
                 if self.num_reviews > 0 and cont_load == self.num_reviews:
                     break
             cont_line += 1

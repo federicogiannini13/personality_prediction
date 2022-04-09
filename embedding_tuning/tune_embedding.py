@@ -9,7 +9,7 @@ sys.path.append(os.getcwd())
 from embedding_tuning.modules.reviews_loader import read_reviews_loaded
 import vocab
 from embedding_tuning.modules import nlpmodel, reviews_loader
-import embedding_tuning.config.tune_embedding_config as config
+from embedding_tuning.config.tune_embedding_config import config as config
 
 v = vocab.VocabCreator()
 
