@@ -1,5 +1,6 @@
 import os
 import sys
+import numpy as np
 while not os.getcwd().endswith("personality_prediction") and os.getcwd()!="/":
     os.chdir(os.path.dirname(os.getcwd()))
 if os.getcwd()=="/":
@@ -23,17 +24,41 @@ if config.load_reviews_from_scratch:
         num_reviews=config.num_reviews,
         shuffle=config.shuffle,
         embedding_name=config.embedding_name,
+        specific=config.specific
     )
 else:
-    l = read_reviews_loaded(config.embedding_name)
+    specific = "_specific" if config.specific else "_unique"
+    l = read_reviews_loaded(config.embedding_name+specific)
 
 if config.tune_embedding:
-    for ocean in config.ocean_traits:
-        root_ = os.path.join(l.embedding_path, str(ocean) + " ocean")
+    if config.specific:
+        for ocean in config.ocean_traits:
+            root_ = os.path.join(l.embedding_path, str(ocean) + " ocean")
+            m = nlpmodel.NLPModel(
+                specific=True,
+                weights=l.weights.copy(),
+                train_inputs=l.train_inputs,
+                train_outputs=l.train_outputs[ocean],
+                features_number=config.features_config[0],
+                filters_number=config.features_config[1],
+                hidden_units=config.features_config[2],
+                train_zeros=config.train_zeros,
+            )
+            m.fit_predict(
+                l.test_inputs,
+                l.test_outputs[ocean],
+                root_path=root_,
+                epochs_number=config.epochs_number,
+            )
+    else:
+        l.train_outputs = np.asarray(l.train_outputs).take(config.ocean_traits, axis=0)
+        l.test_outputs = np.asarray(l.test_outputs).take(config.ocean_traits, axis=0)
+        root_ = l.embedding_path
         m = nlpmodel.NLPModel(
+            specific = False,
             weights=l.weights.copy(),
             train_inputs=l.train_inputs,
-            train_outputs=l.train_outputs[ocean],
+            train_outputs=l.train_outputs,
             features_number=config.features_config[0],
             filters_number=config.features_config[1],
             hidden_units=config.features_config[2],
@@ -41,7 +66,7 @@ if config.tune_embedding:
         )
         m.fit_predict(
             l.test_inputs,
-            l.test_outputs[ocean],
+            l.test_outputs,
             root_path=root_,
             epochs_number=config.epochs_number,
         )

@@ -5,9 +5,10 @@ from tensorflow.keras.layers import (
     LeakyReLU,
     Dropout,
 )
-import sklearn.metrics
+import sklearn.metrics as skm
 import numpy as np
 import pickle
+import os
 from utils import create_dir
 
 
@@ -16,7 +17,7 @@ class FNNModel:
     Class that implements the fnn model.
     """
 
-    def __init__(self, input_dim=100, dropout=0.3):
+    def __init__(self, input_dim=100, dropout=0.3, n_traits=1):
         """
         Init method that builds the model.
 
@@ -26,6 +27,8 @@ class FNNModel:
             The dimension of the input layer (embedding size).
         dropout: float, default: 0.3
             The value of dropout for the dropout layer.
+        n_traits: int, default: 1
+            The number of personality traits to which the model must predict the score.
 
         Attributes
         ----------
@@ -47,6 +50,7 @@ class FNNModel:
         self.input_dim = input_dim
         self.dropout = dropout
         self.dtype = np.float32
+        self.n_traits = n_traits
         self.hidden_activation = LeakyReLU(alpha=0.2)
         self.h1_layer_output_dim = 140
         self.h2_layer_output_dim = 70
@@ -81,7 +85,7 @@ class FNNModel:
         )
         self.dropout_layer = Dropout(self.dropout)
         self.output_layer = Dense(
-            units=1, activation=self.hidden_activation, name="out"
+            units=self.n_traits, activation=self.hidden_activation, name="out"
         )
 
     def _create_model(self):
@@ -160,8 +164,8 @@ class FNNModel:
             )
             if test_inputs is not None:
                 pred = self.model.predict(test_inputs)
-                mse = sklearn.metrics.mean_squared_error(test_outputs, pred)
-                r2 = sklearn.metrics.r2_score(test_outputs, pred)
+                mse = skm.mean_squared_error(test_outputs, pred)
+                r2 = skm.r2_score(test_outputs, pred)
                 self.predictions = (
                     self.predictions
                     + [-100] * (epochs_interval_evaluation - 1)

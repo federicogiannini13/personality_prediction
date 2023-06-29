@@ -1,6 +1,7 @@
 import os
 import yaml
 from settings import ROOT_DIR
+import numpy as np
 
 
 def create_dir(path):
@@ -12,6 +13,16 @@ def create_dir_file(path):
     directory = os.path.dirname(path)
     if not os.path.exists(directory):
         os.makedirs(directory)
+
+
+def convert_out(output, n_traits=5):
+    out = []
+    for i in range (0,n_traits):
+        out.append([])
+    for i in range (0, np.shape(output)[1]):
+        for j in range (0,n_traits):
+            out[j].append(output[j][i])
+    return np.asarray(out)
 
 
 def load_yaml_config(config, path):

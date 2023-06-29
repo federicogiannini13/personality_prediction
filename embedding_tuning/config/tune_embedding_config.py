@@ -11,6 +11,9 @@ from utils import Config, load_yaml_config
 config = Config()
 config.ocean_traits = [0, 1, 2, 3, 4]
 # OCEAN personality traits to which tune the embedding: O:0, C:1, E:2, A:3, N:4
+config.specific = True
+# if True it will create one embedding for each personality trait
+# if False it will create a unique embedding for all the personality traits
 config.epochs_number = 10
 # NLP model's training epochs
 config.num_reviews = 1500000

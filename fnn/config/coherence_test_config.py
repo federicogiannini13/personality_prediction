@@ -33,7 +33,7 @@ config.epochs_interval_evaluation = 1
 # M1's training will stop to evaluate performance only if test1=True
 config.folds_number = 10
 # Numbers of K-fold CV folds.
-config.embedding_name = "tuned_embedding"
+config.embedding_name = "tuned_embedding_specific"
 # The embedding to be used. There must be a directory containing the embedding in data folder.
 config.test1 = False
 # True if you want to evaluate M1's performances trainings on test set. Use False to skip the evaluation.

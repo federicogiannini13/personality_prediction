@@ -27,6 +27,7 @@ class ReviewsLoader:
         shuffle=True,
         output_type="mean",
         embedding_name="new_tuned_embedding",
+        specific=True
     ):
         """
         Init method that reads and preprocess Yelp reviews. It follows these steps:
@@ -61,6 +62,9 @@ class ReviewsLoader:
             'sum' if the target of a review, for each personality trait, is the sum of known terms' scores.
         embedding_name: str, default: 'new_tuned_embedding'
             The name of the dir to be created that stores the tuned embedding.
+        specific: bool, default: True
+            If True it considers an embedding for each personality trait.
+            If False it considers a unique embedding for all the personality trait.
 
         Attributes
         ----------
@@ -91,6 +95,7 @@ class ReviewsLoader:
         self.dict_ocean = {}
         self.dict_emb = {}
         self.frequencies = {}
+        self.specific=specific
 
         self.dict_emb = dict_emb
         self.dict_ocean = dict_ocean
@@ -107,6 +112,10 @@ class ReviewsLoader:
         else:
             self.sep = None
         self.embedding_name = embedding_name
+        if specific:
+            embedding_name = f"{embedding_name}_specific"
+        else:
+            embedding_name = f"{embedding_name}_unique"
         self.embedding_path = os.path.join(ROOT_DIR, "data", embedding_name)
         create_dir(self.embedding_path)
 
@@ -300,13 +309,13 @@ class ReviewsLoader:
             pickle.dump(self.frequencies, f)
 
 
-def read_reviews_loaded(embedding_name="new_tuned_embedding"):
+def read_reviews_loaded(embedding_name="new_tuned_embedding_specific"):
     """
     Read reviews already loaded and preprocessed.
 
     Parameters
     ----------
-    embedding_name: str, default: 'new_tuned_embedding'
+    embedding_name: str, default: 'new_tuned_embedding_specific'
         The embedding name corresponding to the directory's name in which are stored its data.
 
     Returns
@@ -320,8 +329,10 @@ def read_reviews_loaded(embedding_name="new_tuned_embedding"):
         pass
 
     embedding_path = os.path.join(ROOT_DIR, "data", embedding_name)
+    print("PATH:",embedding_path)
     l = ReviewsLoaded()
     l.embedding_path = embedding_path
+
     with open(os.path.join(embedding_path, "train_inputs.pickle"), "rb") as f:
         l.train_inputs = pickle.load(f)
     with open(os.path.join(embedding_path, "train_outputs.pickle"), "rb") as f:

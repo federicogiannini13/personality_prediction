@@ -10,7 +10,7 @@ This repository contains the code used for the experimentation shown in the pape
 ### Project structure
 The project is composed by the following directories.
 #### data
-Contains embeddings (GloVe and tuned embeddings), known terms scoring dataset and the Yelp reviews corpus.
+Contains embeddings (GloVe and tuned embeddings), the known terms scoring dataset and the Yelp reviews corpus.
 #### embedding_tuning
 Module that tunes GloVe embedding.
 * **tune_embedding.py**: tunes GloVe embedding by training the CNN models on Yelp reviews corpus. Saves the tuned embeddings in the data directory. Each trait i (i=0: trait O, i=1: trait C, i=2: trait E, i=3: trait A, i=4: trait N) has its own `i_trait` subdirecotry containing the pickle file representing the hidden layer weights' matrix associated to the CNN model of the trait i. It stores also other pickle files: embedding vocabulary, words' frequencies, test/train inputs/outputs and initial weights.

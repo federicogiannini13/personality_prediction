@@ -12,10 +12,10 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow import math as M
 import numpy as np
 import sklearn
-import sklearn.metrics
+import sklearn.metrics as skm
 import pickle
 import os
-from utils import create_dir
+from utils import create_dir, convert_out
 
 
 class NLPModel:
@@ -27,6 +27,7 @@ class NLPModel:
         self,
         train_inputs,
         train_outputs,
+        specific=True,
         weights=None,
         voc_dim=60000,
         features_number=200,
@@ -45,9 +46,14 @@ class NLPModel:
         train_inputs: numpy.array
             The numpy.array containing the encoded reviews of training set.
         train_outputs: numpy.array
-            The numpy.array with len train_size, containing the reviews target.
+            If specific==True, the numpy.array with len train_size, containing the reviews target.
+            If specific==False, the numpy.array with shape (train_size, number_of_traits), containing the reviews target.
+        specific: bool, default: True
+            If True the embedding will be tuned considering only one trait.
+            If False the embedding will be tuned considering all the traits together.
         weights: list, default: None
-            In the case of embedding tuning, this parameter represents the list, with shape (voc_dim, embedding_feature_number) representing the initial weights of the embedding to be tuned.
+            In the case of embedding tuning, this parameter represents the list, with shape
+            (voc_dim, embedding_feature_number) representing the initial weights of the embedding to be tuned.
             weights[i] must be the representation in the original embedding of term with index=i.
             If weights is given, the model will tune the embedding.
         voc_dim: int, default: 60000
@@ -86,13 +92,13 @@ class NLPModel:
         self.output_layer: tensorflow.keras.layers.Dense
             The model's output layer.
         """
-
         self.voc_dim = voc_dim
         self.features_number = features_number
         self.window_size = window_size
         self.filters_number = filters_number
         self.hidden_units = hidden_units
         self.batch_size = batch_size
+        self.specific = specific
 
         self.train_zeros = train_zeros
 
@@ -102,8 +108,21 @@ class NLPModel:
             self.sentence_length = self._maxLength(train_inputs)
         self.train_inputs = self._createInputs(train_inputs)
 
+        print("IN SHAPE:", self.train_inputs.shape)
+
         assert train_outputs is not None
-        self.train_outputs = self._createOutputs(train_outputs, train_outputs.shape[0])
+        self.train_outputs = np.asarray(train_outputs)
+        print("OUT SHAPE:", self.train_outputs.shape)
+        if self.specific:
+            self.n_traits = 1
+            assert len(self.train_outputs.shape) == 1
+        else:
+            assert len(self.train_outputs.shape) == 2
+            self.n_traits = self.train_outputs.shape[0]
+        if self.specific:
+            self.train_outputs = self._createOutputs(train_outputs, train_outputs.shape[0])
+        else:
+            self.train_outputs = self._createOutputs(train_outputs, train_outputs.shape[1])
 
         if weights is not None:
             self.weights = np.asarray(weights)
@@ -129,8 +148,7 @@ class NLPModel:
         return max_l + 20
 
     def _createOutputs(self, x, number):
-        x = np.asarray(x)
-        return x.reshape(number, 1, 1, 1)
+        return x.reshape(number, 1, 1, self.n_traits)
 
     def _createInputs(self, inp):
         return pad_sequences(
@@ -178,7 +196,7 @@ class NLPModel:
         )
         self.model.add(self.hidden_layer)
 
-        self.output_layer = Dense(1, activation="linear", name="output")
+        self.output_layer = Dense(self.n_traits, activation="linear", name="output")
         self.model.add(self.output_layer)
 
     def _createModel_no_train_zeros(self):
@@ -220,7 +238,7 @@ class NLPModel:
         )
         self.layers = (self.hidden_layer)(self.layers)
 
-        self.output_layer = Dense(1, activation="linear", name="output")
+        self.output_layer = Dense(self.n_traits, activation="linear", name="output")
         self.layers = (self.output_layer)(self.layers)
 
         self.model = tf.keras.models.Model(inputs=self.input_layer, outputs=self.layers)
@@ -236,68 +254,9 @@ class NLPModel:
             print(layer.name, end=" ")
             print(layer.output_shape)
 
-    def _fit_predict_train_zeros(self, x, y, root=None, epochs_number=10):
-        x = self._createInputs(x)
-        y_mse = y
-        y = self._createOutputs(y, x.shape[0])
-        self.predictions = []
-        self.mse = []
-        self.weights = []
-        for i in range(0, epochs_number):
-            print("\n________\nEPOCH ", i + 1, "/", epochs_number)
-            self.model.fit(
-                x=self.train_inputs,
-                y=self.train_outputs,
-                epochs=1,
-                batch_size=self.batch_size,
-            )
-            self.weights.append(self.embedding_layer.get_weights())
-            pred = self.model.predict(x)
-            pred = pred.reshape(pred.shape[0])
-            self.predictions.append(pred)
-            mse = sklearn.metrics.mean_squared_error(y_mse, pred)
-            self.mse.append(mse)
-            print("\nTEST RESULTS:\nMSE\n", mse)
-
-            if root is not None:
-                with open(os.path.join(root, "mse.pickle"), "wb") as f:
-                    pickle.dump(self.mse, f)
-                with open(os.path.join(root, "weights.pickle"), "wb") as f:
-                    pickle.dump(self.weights, f)
-
-    def _fit_predict_no_train_zeros(self, x, y, root=None, epochs_number=10):
-        x = self._createInputs(x)
-        y_mse = y
-        # TODO capire se serve questo y o posso cancellarlo
-        y = self._createOutputs(y, x.shape[0])
-        self.predictions = []
-        self.mse = []
-        self.weights = []
-        for i in range(0, epochs_number):
-            print("\n________\nEPOCH ", i + 1, "/", epochs_number)
-            self.model.fit(
-                x=self.train_inputs,
-                y=self.train_outputs,
-                epochs=1,
-                batch_size=self.batch_size,
-            )
-            self.weights.append(self.embedding_layer.get_weights())
-            pred = self.model.predict(x)
-            pred = pred.reshape(pred.shape[0])
-            self.predictions.append(pred)
-            mse = sklearn.metrics.mean_squared_error(y_mse, pred)
-            self.mse.append(mse)
-            print("\nTEST RESULTS:\nMSE\n", mse)
-
-            if root is not None:
-                with open(os.path.join(root, "mse.pickle"), "wb") as f:
-                    pickle.dump(self.mse, f)
-                with open(os.path.join(root, "weights.pickle"), "wb") as f:
-                    pickle.dump(self.weights, f)
-
     def fit_predict(self, test_inputs, test_outputs, root_path=None, epochs_number=10):
         """
-        Fit the model on the training set and, at the end of each epoch, evaluate R2 and MSE metrics on test set.
+        Fit the model on the training set and, at the end of each epoch, evaluate MSE metrics on test set.
         Store performances and model's weights in the specific path.
 
         Parameters
@@ -305,7 +264,9 @@ class NLPModel:
         test_inputs: numpy.array
             the numpy.array containing the encoded reviews of test set.
         test_outputs: numpy.array
-            the numpy.array with len test_size, containing the reviews target.
+            If the embedding is specific, the numpy.array with len test_size, containing the test set's reviews target.
+            If the embedding is unique, the numpy.array with shape (test_size, number_of_traits), test set's reviews
+            targets.
         root_path: path, default: None
             the path in which store weights and metrics
         epochs_number: int, default: 10
@@ -315,8 +276,6 @@ class NLPModel:
         -------
         self.predictions: list
             The list containing model's predictions on test set after each epochs.
-        self.r2: list
-            The list containing model's predictions' estimated R2 on test set after each training epochs.
         self.mse: list
             The list containing model's predictions' estimated MSE on test set after each training epochs.
         self.weights: list
@@ -325,11 +284,43 @@ class NLPModel:
         """
         if root_path is not None:
             create_dir(root_path)
-        if self.train_zeros:
-            self._fit_predict_train_zeros(
-                test_inputs, test_outputs, root_path, epochs_number
+        test_inputs = self._createInputs(test_inputs)
+
+        self.predictions = []
+        self.mse = []
+        self.weights = []
+        for i in range(0, epochs_number):
+            print("\n________\nEPOCH ", i + 1, "/", epochs_number)
+            self.model.fit(
+                x=self.train_inputs,
+                y=self.train_outputs,
+                epochs=1,
+                batch_size=self.batch_size,
             )
-        else:
-            self._fit_predict_no_train_zeros(
-                test_inputs, test_outputs, root_path, epochs_number
-            )
+            self.weights.append(self.embedding_layer.get_weights())
+            pred = self.model.predict(test_inputs)
+            if self.specific:
+                pred = pred.reshape(pred.shape[0])
+            else:
+                pred = pred.reshape(pred.shape[0], self.n_traits)
+            self.predictions.append(pred)
+            if not self.specific:
+                self.predictions.append(pred)
+                mse = []
+                for i in range(0, self.n_traits):
+                    mse.append(skm.mean_squared_error(test_outputs[i,:], pred[:,i]))
+                print("\nTEST RESULTS:\nMSE\n")
+                for mse_ in mse:
+                    print(mse_)
+            else:
+                mse = skm.mean_squared_error(test_outputs, pred)
+                print("\nTEST RESULTS:\nMSE\n", mse)
+            self.mse.append(mse)
+
+            if root_path is not None:
+                with open(os.path.join(root_path, "mse.pickle"), "wb") as f:
+                    pickle.dump(self.mse, f)
+                with open(os.path.join(root_path, "weights.pickle"), "wb") as f:
+                    pickle.dump(self.weights, f)
+
+
