@@ -148,10 +148,15 @@ class FNNModel:
         self.predictions: list
             The test set's scores predicted by the model after each training epoch.
         """
-        self.mse = []
-        self.r2 = []
-        self.predictions = []
-        best_mse = 1000
+        if self.n_traits == 1:
+            self.mse = []
+            self.r2 = []
+            self.predictions = []
+        else:
+            self.mse = [[] for _ in range(self.n_traits)]
+            self.r2 = [[] for _ in range(self.n_traits)]
+            self.predictions = [[] for _ in range(self.n_traits)]
+        self.best_mse = 1000
         if root is not None:
             create_dir(root)
         for e in range(0, epochs, epochs_interval_evaluation):
@@ -164,19 +169,38 @@ class FNNModel:
             )
             if test_inputs is not None:
                 pred = self.model.predict(test_inputs)
-                mse = skm.mean_squared_error(test_outputs, pred)
-                r2 = skm.r2_score(test_outputs, pred)
-                self.predictions = (
-                    self.predictions
-                    + [-100] * (epochs_interval_evaluation - 1)
-                    + [pred]
-                )
-                self.mse = self.mse + [100] * (epochs_interval_evaluation - 1) + [mse]
-                self.r2 = self.r2 + [-100] * (epochs_interval_evaluation - 1) + [r2]
+                if self.n_traits == 1:
+                    mse = skm.mean_squared_error(test_outputs, pred)
+                    r2 = skm.r2_score(test_outputs, pred)
+                    self.predictions = (
+                        self.predictions
+                        + [-100] * (epochs_interval_evaluation - 1)
+                        + [pred]
+                    )
+                    self.mse = self.mse + [100] * (epochs_interval_evaluation - 1) + [mse]
+                    self.r2 = self.r2 + [-100] * (epochs_interval_evaluation - 1) + [r2]
+                else:
+                    mse = []
+                    r2 = []
+                    for tr in range(self.n_traits):
+                        mse.append(skm.mean_squared_error(test_outputs[:,tr], pred[:,tr]))
+                        r2.append(skm.r2_score(test_outputs[:, tr], pred[:, tr]))
+                        self.mse[tr] = self.mse[tr] + [100] * (epochs_interval_evaluation - 1) + [mse[tr]]
+                        self.r2[tr] = self.r2[tr] + [-100] * (epochs_interval_evaluation - 1) + [r2[tr]]
+                        self.predictions[tr] = (
+                                self.predictions[tr]
+                                + [-100] * (epochs_interval_evaluation - 1)
+                                + [pred[tr]]
+                        )
+                    mse = np.mean(mse)
+                    r2 = np.mean(r2)
+
                 print(r2, "\t", mse)
-                if mse < best_mse:
-                    best_mse = mse
+                if mse < self.best_mse:
+                    self.best_mse = mse
                     self.best_weights = self.model.get_weights()
+                    self.best_epoch = e
+                    self.best_r2 = r2
                     if root is not None:
                         with open(os.path.join(root, "best_weights.pickle"), "wb") as f:
                             pickle.dump(self.best_weights, f)

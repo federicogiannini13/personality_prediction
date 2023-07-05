@@ -8,7 +8,7 @@ import random
 
 class Preprocessing:
     """
-    Class that manages data associated with a specific embedding. It is used to prepare data to be inputted into the model.
+    Class that manages data associated with an embedding. It is used to prepare data to be inputted into the model.
     Training and test samples are associated with known terms only.
     """
 

@@ -15,6 +15,10 @@ from utils import load_yaml_config, Config
 config = Config()
 config.ocean_traits = [0, 1, 2, 3, 4]
 # OCEAN personality traits to which perform the coherence test: O:0, C:1, E:2, A:3, N:4
+config.specific_models = True
+# True if you want to build a model for each personality trait
+# False if you want to use a model for all the given personality traits. The model will have multiple outputs.
+#   (possible if the embedding is unique).
 config.batch_size = 32
 # training batch size of fnn models.
 config.folds_number = 10

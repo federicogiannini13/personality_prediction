@@ -323,4 +323,10 @@ class NLPModel:
                 with open(os.path.join(root_path, "weights.pickle"), "wb") as f:
                     pickle.dump(self.weights, f)
 
-
+        if self.specific:
+            with open(os.path.join(root_path, "embedding.pickle"), "wb") as f:
+                pickle.dump(self.weights[np.argmin(self.mse)], f)
+        else:
+            self.mse = np.asarray(self.mse)
+            with open(os.path.join(root_path, "embedding.pickle"), "wb") as f:
+                pickle.dump(self.weights[np.argmin(self.mse.mean(axis=1))], f)
