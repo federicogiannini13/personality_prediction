@@ -1,5 +1,5 @@
 # PersonalityPrediction
-This repository contains the code used for the experimentation shown in the paper published in Journal of Personality([https://doi.org/10.1111/jopy.12915](Journal version)).
+This repository contains the code used for the experimentation shown in the paper published in Journal of Personality((https://doi.org/10.1111/jopy.12915)[Journal version]).
 
 ### Installation
 1) Download `data.zip` file from https://drive.google.com/drive/folders/1WSJl_EW8hJ50IyygE2y0t5OiEmzlZtMD?usp=sharing and unzip it in the project dir.
